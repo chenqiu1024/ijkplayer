@@ -1,0 +1,23 @@
+ff_ffplay.c:
+
+1.1 解码图像帧数据回调：
+    VTDecoderCallback -> QueuePicture -> ffp_queue_picture -> queue_picture：
+    1.1.1 创建图像帧：-> alloc_picture:
+        SDL_VoutSetOverlayFormat(ffp->vout, ffp->overlay_format);
+        vp->bmp = SDL_Vout_CreateOverlay(vp->width, vp->height,  frame_format,  ffp->vout);
+        实现于：(ffp->)vout->create_overlay
+
+    1.1.2 填充图像帧数据：-> SDL_VoutFillFrameYUVOverlay
+        实现于：overlay->func_fill_frame
+
+1.2 显示图像帧数据回调：
+    video_refresh_thread -> video_refresh -> video_display2 -> video_image_display2 :
+        vp = frame_queue_peek_last(&is->pictq);
+        …
+        SDL_VoutDisplayYUVOverlay(ffp->vout, vp->bmp);
+        实现于：(ffp->)vout->display_overlay
+
+最终具体实现于：ijksdl_vout_ios_gles2.m
+
+
+

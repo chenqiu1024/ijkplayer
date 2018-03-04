@@ -27,9 +27,17 @@ ff_ffplay.c:
     调用自：IJKFFMoviePlayerController.m:
         _mediaPlayer = ijkmp_ios_create(media_player_msg_loop);
 
+    IJKSDLGLView.m :
+
+    ijkplayer.c
 
 音频：
 ijkplayer_ios.m -> ijkmp_ios_create:
     mp->ffplayer->pipeline = ffpipeline_create_from_ios(mp->ffplayer);
     -> SDL_AoutIos_CreateForAudioUnit()
+    ijksdl_aout_ios_audiounit.m
 
+    IJKFFMoviePlayerController prepareToPlay -> ijkmp_prepare_async_l() -> ffp_prepare_async_l() -> ffpipeline_open_audio_output()
+
+    IJKSDLAudioQueueController.m :
+        IJKSDLAudioQueueOuptutCallback()

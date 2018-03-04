@@ -1,6 +1,6 @@
 ##git clone https://github.com/Bilibili/ijkplayer.git ijkplayer-android
 ##cd ijkplayer-android
-git checkout -B latest k0.8.4
+##git checkout -B latest k0.8.4
 
 ./init-android.sh
 

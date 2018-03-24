@@ -22,7 +22,7 @@ ff_ffplay.c:
 最终具体实现于：ijksdl_vout_ios_gles2.m, 自定义实现就是要替换它
 
 而设置实现为它是在ijkplayer_ios.m -> ijkmp_ios_create:
-    mp->ffplayer->vout = SDL_VoutIos_CreateForGLES2();
+    mp->ffplayer->vout = SDL_VoutIos_CreateForGLES2();//定制化时，可以替换SDL_VoutIos_CreateForGLES2()
 
     调用自：IJKFFMoviePlayerController.m:
         _mediaPlayer = ijkmp_ios_create(media_player_msg_loop);
@@ -30,6 +30,8 @@ ff_ffplay.c:
     IJKSDLGLView.m :
 
     ijkplayer.c
+
+可复用IJK_GLES2_Renderer（）；
 
 音频：
 ijkplayer_ios.m -> ijkmp_ios_create:
@@ -41,3 +43,19 @@ ijkplayer_ios.m -> ijkmp_ios_create:
 
     IJKSDLAudioQueueController.m :
         IJKSDLAudioQueueOuptutCallback()
+
+
+
+Search Paths:
+
+IJKMediaPlayer.xcodeproj:
+Prefix:
+ijkplayer_iOS/ios/IJKMediaPlayer
+Header:
+    ../build/universal/include
+    IJKMediaPlayer/ijkmedia
+    ../../ijkmedia -R
+Library:
+    "$(SRCROOT)/../build/universal/lib"
+
+

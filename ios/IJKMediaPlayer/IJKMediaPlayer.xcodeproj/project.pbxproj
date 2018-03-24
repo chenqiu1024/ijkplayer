@@ -1515,7 +1515,7 @@
 					"$(inherited)",
 					../build/universal/include,
 					IJKMediaPlayer/ijkmedia,
-					../../ijkmedia,
+					"../../ijkmedia/**",
 				);
 				INFOPLIST_FILE = IJKMediaFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1561,7 +1561,7 @@
 					"$(inherited)",
 					../build/universal/include,
 					IJKMediaPlayer/ijkmedia,
-					../../ijkmedia,
+					"../../ijkmedia/**",
 				);
 				INFOPLIST_FILE = IJKMediaFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

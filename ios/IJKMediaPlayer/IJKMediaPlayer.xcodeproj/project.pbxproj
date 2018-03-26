@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		4DA7F6891F2B1E270032A499 /* ijkiourlhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */; };
 		4DA7F68A1F2B1E270032A499 /* ijkiourlhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */; };
+		52FAF1D320678EEF00713E1C /* IJKAudioKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E6EE92A1187810C5009EAB56 /* IJKAudioKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		52FAF1D420678EF500713E1C /* IJKFFMoviePlayerDef.h in Headers */ = {isa = PBXBuildFile; fileRef = E6F727B917F2D9D30043623F /* IJKFFMoviePlayerDef.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		52FAF1D520678F4C00713E1C /* IJKAudioKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E6EE92A1187810C5009EAB56 /* IJKAudioKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		52FAF1D620678F5100713E1C /* IJKFFMoviePlayerDef.h in Headers */ = {isa = PBXBuildFile; fileRef = E6F727B917F2D9D30043623F /* IJKFFMoviePlayerDef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5407EC291DF7F93B00457BFE /* IJKVideoToolBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 5407EC271DF7F93B00457BFE /* IJKVideoToolBox.h */; };
 		5407EC2A1DF7F93B00457BFE /* IJKVideoToolBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 5407EC281DF7F93B00457BFE /* IJKVideoToolBox.m */; };
 		5407EC2D1DF81D2600457BFE /* IJKVideoToolBoxSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 5407EC2B1DF81D2600457BFE /* IJKVideoToolBoxSync.h */; };
@@ -954,6 +958,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52FAF1D620678F5100713E1C /* IJKFFMoviePlayerDef.h in Headers */,
+				52FAF1D520678F4C00713E1C /* IJKAudioKit.h in Headers */,
 				5450B01F1E63EA4300568494 /* IJKFFMonitor.h in Headers */,
 				5450B0201E63EA4300568494 /* ijkiourl.h in Headers */,
 				5450B0211E63EA4300568494 /* IJKFFMoviePlayerController.h in Headers */,
@@ -993,6 +999,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52FAF1D420678EF500713E1C /* IJKFFMoviePlayerDef.h in Headers */,
+				52FAF1D320678EEF00713E1C /* IJKAudioKit.h in Headers */,
 				E6DBD3891C8941EB0058E4FB /* IJKFFMonitor.h in Headers */,
 				54CF8A3C1E1526F800309DD5 /* ijkiourl.h in Headers */,
 				E654EAEA1B6B295200B0F2D0 /* IJKFFMoviePlayerController.h in Headers */,

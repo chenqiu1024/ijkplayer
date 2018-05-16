@@ -371,8 +371,9 @@ GLboolean IJK_GLES2_Renderer_renderOverlay(IJK_GLES2_Renderer *renderer, SDL_Vou
     if (!renderer || !renderer->func_uploadTexture)
         return GL_FALSE;
 
+    glClearColor(1.0, 0.5, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);               IJK_GLES2_checkError_TRACE("glClear");
-
+///!!!
     GLsizei visible_width  = renderer->frame_width;
     GLsizei visible_height = renderer->frame_height;
     if (overlay) {
@@ -424,6 +425,6 @@ GLboolean IJK_GLES2_Renderer_renderOverlay(IJK_GLES2_Renderer *renderer, SDL_Vou
     }
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);      IJK_GLES2_checkError_TRACE("glDrawArrays");
-
+//*/
     return GL_TRUE;
 }

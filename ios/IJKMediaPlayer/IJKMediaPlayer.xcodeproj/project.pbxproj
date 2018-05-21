@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		4DA7F6891F2B1E270032A499 /* ijkiourlhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */; };
 		4DA7F68A1F2B1E270032A499 /* ijkiourlhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */; };
+		524F117C20B2EB6E0045795F /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 524F117B20B2EB6E0045795F /* libbz2.tbd */; };
+		524F117E20B2EB750045795F /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 524F117D20B2EB750045795F /* libiconv.tbd */; };
+		524F117F20B2EBD10045795F /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 524F117B20B2EB6E0045795F /* libbz2.tbd */; };
+		524F118020B2EBD50045795F /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 524F117D20B2EB750045795F /* libiconv.tbd */; };
 		52FAF1D320678EEF00713E1C /* IJKAudioKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E6EE92A1187810C5009EAB56 /* IJKAudioKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52FAF1D420678EF500713E1C /* IJKFFMoviePlayerDef.h in Headers */ = {isa = PBXBuildFile; fileRef = E6F727B917F2D9D30043623F /* IJKFFMoviePlayerDef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52FAF1D520678F4C00713E1C /* IJKAudioKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E6EE92A1187810C5009EAB56 /* IJKAudioKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -282,6 +286,8 @@
 		45DB4AA71A5D52AE005CAD41 /* ijksdl_vout_overlay_videotoolbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijksdl_vout_overlay_videotoolbox.h; sourceTree = "<group>"; };
 		45DB4AA81A5D52AE005CAD41 /* ijksdl_vout_overlay_videotoolbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ijksdl_vout_overlay_videotoolbox.m; sourceTree = "<group>"; };
 		4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ijkiourlhook.c; sourceTree = "<group>"; };
+		524F117B20B2EB6E0045795F /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		524F117D20B2EB750045795F /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		5407EC271DF7F93B00457BFE /* IJKVideoToolBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IJKVideoToolBox.h; path = ijkmedia/ijkplayer/ios/pipeline/IJKVideoToolBox.h; sourceTree = "<group>"; };
 		5407EC281DF7F93B00457BFE /* IJKVideoToolBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IJKVideoToolBox.m; path = ijkmedia/ijkplayer/ios/pipeline/IJKVideoToolBox.m; sourceTree = "<group>"; };
 		5407EC2B1DF81D2600457BFE /* IJKVideoToolBoxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IJKVideoToolBoxSync.h; path = ijkmedia/ijkplayer/ios/pipeline/IJKVideoToolBoxSync.h; sourceTree = "<group>"; };
@@ -472,6 +478,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				524F118020B2EBD50045795F /* libiconv.tbd in Frameworks */,
+				524F117F20B2EBD10045795F /* libbz2.tbd in Frameworks */,
 				5450B0471E63EABC00568494 /* libz.tbd in Frameworks */,
 				5450B0451E63EAB700568494 /* libcrypto.a in Frameworks */,
 				5450B0461E63EAB700568494 /* libssl.a in Frameworks */,
@@ -488,6 +496,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				524F117E20B2EB750045795F /* libiconv.tbd in Frameworks */,
+				524F117C20B2EB6E0045795F /* libbz2.tbd in Frameworks */,
 				E653C6F61BCE5A750016835A /* libavcodec.a in Frameworks */,
 				E653C6F81BCE5A750016835A /* libavfilter.a in Frameworks */,
 				E653C6FA1BCE5A750016835A /* libavformat.a in Frameworks */,
@@ -657,6 +667,8 @@
 		E6903EBB17EAF6C500CFD954 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				524F117D20B2EB750045795F /* libiconv.tbd */,
+				524F117B20B2EB6E0045795F /* libbz2.tbd */,
 				5450AF8F1E63E59800568494 /* libz.tbd */,
 				5450AF8B1E63E59300568494 /* libcrypto.a */,
 				5450AF8C1E63E59300568494 /* libssl.a */,

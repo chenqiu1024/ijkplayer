@@ -16,7 +16,8 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <IJKMediaFramework/IJKMediaFramework.h>
+#import <IJKMediaFrameworkWithSSL/IJKMediaFrameworkWithSSL.h>
+//#import <IJKMediaFramework/IJKMediaFramework.h>
 @class IJKMediaControl;
 
 @interface IJKVideoViewController : UIViewController

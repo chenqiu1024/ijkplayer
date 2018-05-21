@@ -107,6 +107,7 @@
 		45D57D601A53233200BDD389 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		45D57D621A53233800BDD389 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		5244BA5D20A92C0200353AAB /* server_cert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = server_cert.cer; sourceTree = "<group>"; };
+		524F117820B2E7D40045795F /* libapple_crypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libapple_crypto.tbd; path = usr/lib/libapple_crypto.tbd; sourceTree = SDKROOT; };
 		546736C31E2371AE00FEE0DF /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		55E809E01B143C47003E98A5 /* IJKDemoMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IJKDemoMainViewController.h; sourceTree = "<group>"; };
 		55E809E11B143C47003E98A5 /* IJKDemoMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IJKDemoMainViewController.m; sourceTree = "<group>"; };
@@ -231,6 +232,7 @@
 		E6903EFE17EAF70200CFD954 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				524F117820B2E7D40045795F /* libapple_crypto.tbd */,
 				546736C31E2371AE00FEE0DF /* libstdc++.tbd */,
 				E63FC28F17F04C83003551EB /* AudioToolbox.framework */,
 				E61B45AD19EF7021002792EC /* AVFoundation.framework */,

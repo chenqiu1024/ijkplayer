@@ -11,7 +11,6 @@
 		45D57D631A53233800BDD389 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45D57D621A53233800BDD389 /* VideoToolbox.framework */; };
 		52257C7320ABDBC200140039 /* IJKMediaFrameworkWithSSL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5207AF011FFD2366007FDF03 /* IJKMediaFrameworkWithSSL.framework */; };
 		52257C7420ABDBC200140039 /* IJKMediaFrameworkWithSSL.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5207AF011FFD2366007FDF03 /* IJKMediaFrameworkWithSSL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5244BA6020A92C0200353AAB /* server_cert.cer in Resources */ = {isa = PBXBuildFile; fileRef = 5244BA5D20A92C0200353AAB /* server_cert.cer */; };
 		546736C41E2371AE00FEE0DF /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 546736C31E2371AE00FEE0DF /* libstdc++.tbd */; };
 		55E809E21B143C47003E98A5 /* IJKDemoMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55E809E11B143C47003E98A5 /* IJKDemoMainViewController.m */; };
 		55E809E41B143C85003E98A5 /* IJKDemoMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E809E31B143C85003E98A5 /* IJKDemoMainViewController.xib */; };
@@ -106,7 +105,6 @@
 /* Begin PBXFileReference section */
 		45D57D601A53233200BDD389 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		45D57D621A53233800BDD389 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
-		5244BA5D20A92C0200353AAB /* server_cert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = server_cert.cer; sourceTree = "<group>"; };
 		546736C31E2371AE00FEE0DF /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		55E809E01B143C47003E98A5 /* IJKDemoMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IJKDemoMainViewController.h; sourceTree = "<group>"; };
 		55E809E11B143C47003E98A5 /* IJKDemoMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IJKDemoMainViewController.m; sourceTree = "<group>"; };
@@ -211,7 +209,6 @@
 		E6903EF317EAF70200CFD954 = {
 			isa = PBXGroup;
 			children = (
-				5244BA5D20A92C0200353AAB /* server_cert.cer */,
 				E6D74F2918A5F94B00165BFD /* IJKMediaPlayer.xcodeproj */,
 				E6903EFE17EAF70200CFD954 /* Frameworks */,
 				E6903F0517EAF70200CFD954 /* IJKMediaDemo */,
@@ -404,7 +401,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6903F0A17EAF70200CFD954 /* InfoPlist.strings in Resources */,
-				5244BA6020A92C0200353AAB /* server_cert.cer in Resources */,
 				E67323AC1B69E76100CB9036 /* MoviePlayerImages.xcassets in Resources */,
 				E6903F1217EAF70200CFD954 /* Default.png in Resources */,
 				E6903F1417EAF70200CFD954 /* Default@2x.png in Resources */,

@@ -490,6 +490,8 @@ inline static int getPlayerOption(IJKFFOptionCategory category)
 
 - (void)didShutdown
 {
+    NSLog(@"#Crash# didShutdown : _glView=%@", _glView);
+    _glView = nil;
 }
 
 - (IJKMPMoviePlaybackState)playbackState

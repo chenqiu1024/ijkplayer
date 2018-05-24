@@ -990,8 +990,10 @@ static void stream_close(FFPlayer *ffp)
     avformat_close_input(&is->ic);
 
     av_log(NULL, AV_LOG_DEBUG, "wait for video_refresh_tid\n");
+    printf("\n#Crash# Before SDL_WaitThread(is->video_refresh_tid, NULL); tid=0x%lx\n", (long)(void*)is->video_refresh_tid->id);
     SDL_WaitThread(is->video_refresh_tid, NULL);
-
+    printf("\n#Crash# After SDL_WaitThread(is->video_refresh_tid, NULL); tid=0x%lx\n", (long)(void*)is->video_refresh_tid->id);
+    
     packet_queue_destroy(&is->videoq);
     packet_queue_destroy(&is->audioq);
     packet_queue_destroy(&is->subtitleq);
@@ -3593,6 +3595,7 @@ static VideoState *stream_open(FFPlayer *ffp, const char *filename, AVInputForma
     is->pause_req = !ffp->start_on_prepared;
 
     is->video_refresh_tid = SDL_CreateThreadEx(&is->_video_refresh_tid, video_refresh_thread, ffp, "ff_vout");
+    printf("\n#Crash# is->video_refresh_tid = SDL_CreateThreadEx...; tid=0x%lx\n", (long)is->video_refresh_tid->id);
     if (!is->video_refresh_tid) {
         av_freep(&ffp->is);
         return NULL;
@@ -3635,15 +3638,20 @@ static int video_refresh_thread(void *arg)
 {
     FFPlayer *ffp = arg;
     VideoState *is = ffp->is;
+    printf("\n#Crash# Begin of video_refresh_thread\n");
     double remaining_time = 0.0;
     while (!is->abort_request) {
         if (remaining_time > 0.0)
             av_usleep((int)(int64_t)(remaining_time * 1000000.0));
         remaining_time = REFRESH_RATE;
         if (is->show_mode != SHOW_MODE_NONE && (!is->paused || is->force_refresh))
+        {
+            printf("\n#Crash# BEGIN of video_refresh\n");
             video_refresh(ffp, &remaining_time);
+            printf("\n#Crash# END of video_refresh\n");
+        }
     }
-
+    printf("\n#Crash# End of video_refresh_thread\n");
     return 0;
 }
 

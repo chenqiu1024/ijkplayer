@@ -1004,10 +1004,13 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
                             } else if (0 == strcmp(type, IJKM_VAL_TYPE__AUDIO)) {
                                 fillMetaInternal(streamMeta, streamRawMeta, IJKM_KEY_SAMPLE_RATE, nil);
                                 fillMetaInternal(streamMeta, streamRawMeta, IJKM_KEY_CHANNEL_LAYOUT, nil);
+                                fillMetaInternal(streamMeta, streamRawMeta, IJKM_KEY_LANGUAGE, nil);
 
                                 if (audio_stream == i) {
                                     _monitor.audioMeta = streamMeta;
                                 }
+                            } else if (0 == strcmp(type, IJKM_VAL_TYPE__TIMEDTEXT)) {
+                                fillMetaInternal(streamMeta, streamRawMeta, IJKM_KEY_LANGUAGE, nil);
                             }
                         }
                     }

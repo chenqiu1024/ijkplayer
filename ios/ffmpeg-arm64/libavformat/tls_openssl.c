@@ -259,8 +259,7 @@ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **op
     // Note, this doesn't check that the peer certificate actually matches
     // the requested hostname.
     if (c->verify)
-        //SSL_CTX_set_verify(p->ctx, SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);
-        SSL_CTX_set_verify(p->ctx, 0, NULL);
+        SSL_CTX_set_verify(p->ctx, SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);
     p->ssl = SSL_new(p->ctx);
     if (!p->ssl) {
         av_log(h, AV_LOG_ERROR, "%s\n", ERR_error_string(ERR_get_error(), NULL));

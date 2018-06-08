@@ -890,6 +890,7 @@ static void video_image_display2(FFPlayer *ffp)
                                 parse_ass_subtitle(sp->sub.rects[0]->ass, buffered_text);
                             }
                             ffp_notify_msg4(ffp, FFP_MSG_TIMED_TEXT, 0, 0, buffered_text, sizeof(buffered_text));
+                            ALOG(0, "Subtitle", "#Subtitle# buffered_text='%s'\n", buffered_text);
                         }
                         sp->uploaded = 1;
                     }

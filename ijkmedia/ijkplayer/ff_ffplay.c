@@ -3646,12 +3646,12 @@ static int video_refresh_thread(void *arg)
         remaining_time = REFRESH_RATE;
         if (is->show_mode != SHOW_MODE_NONE && (!is->paused || is->force_refresh))
         {
-            printf("\n#Crash# BEGIN of video_refresh\n");
+//            printf("\n#Crash# BEGIN of video_refresh\n");
             video_refresh(ffp, &remaining_time);
-            printf("\n#Crash# END of video_refresh\n");
+//            printf("\n#Crash# END of video_refresh\n");
         }
     }
-    printf("\n#Crash# End of video_refresh_thread\n");
+//    printf("\n#Crash# End of video_refresh_thread\n");
     return 0;
 }
 

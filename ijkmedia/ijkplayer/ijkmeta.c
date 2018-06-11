@@ -197,6 +197,15 @@ void ijkmeta_set_avformat_context_l(IjkMediaMeta *meta, AVFormatContext *ic)
             ijkmeta_destroy_p(&stream_meta);
 
         AVStream *st = ic->streams[i];
+        ///!!!
+        int dictCount = av_dict_count(st->metadata);
+        ALOGV("#IjkMeta# Meta data of stream[%d] (%d):\n", i, dictCount);
+        AVDictionaryEntry* iter = NULL;
+        while (NULL != (iter = av_dict_get(st->metadata, "", iter, AV_DICT_IGNORE_SUFFIX)))
+        {
+            ALOGV("#IjkMeta# <key, value> = <%s, %s>\n", iter->key, iter->value);
+        }
+        ///!!!
         if (!st || !st->codecpar)
             continue;
 

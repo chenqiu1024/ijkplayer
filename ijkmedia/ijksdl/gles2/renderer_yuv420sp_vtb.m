@@ -34,7 +34,7 @@ typedef struct IJK_GLES2_Renderer_Opaque
 
 static GLboolean yuv420sp_vtb_use(IJK_GLES2_Renderer *renderer)
 {
-    ALOGI("use render yuv420sp_vtb\n");
+//    ALOGI("use render yuv420sp_vtb\n");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glUseProgram(renderer->program);            IJK_GLES2_checkError_TRACE("glUseProgram");

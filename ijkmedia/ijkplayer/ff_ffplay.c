@@ -2581,12 +2581,16 @@ reload:
 /* prepare a new audio buffer */
 static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams)
 {
+    void* origOpaque = opaque;
+    Uint8* origStream = stream;
+    int origLen = len;
+
     FFPlayer *ffp = opaque;///#AudioCallback#
     VideoState *is = ffp->is;
     int audio_size, len1;
     if (!ffp || !is) {
         memset(stream, 0, len);
-        return;
+        goto finally;
     }
 
     ffp->audio_callback_time = av_gettime_relative();
@@ -2648,6 +2652,13 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSp
         set_clock_at(&is->audclk, is->audio_clock - (double)(is->audio_write_buf_size) / is->audio_tgt.bytes_per_sec - SDL_AoutGetLatencySeconds(ffp->aout), is->audio_clock_serial, ffp->audio_callback_time / 1000000.0);
         sync_clock_to_slave(&is->extclk, &is->audclk);
     }
+    
+finally:
+    if (ffp && ffp->audioCallback)
+    {//#AudioCallback#
+        ffp->audioCallback(origOpaque, origStream, origLen, audioParams);
+    }
+    return;
 }
 
 static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wanted_nb_channels, int wanted_sample_rate, struct AudioParams *audio_hw_params)

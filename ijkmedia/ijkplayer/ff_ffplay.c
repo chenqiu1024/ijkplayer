@@ -2579,9 +2579,9 @@ reload:
 }
 
 /* prepare a new audio buffer */
-static void sdl_audio_callback(void *opaque, Uint8 *stream, int len)
+static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams)
 {
-    FFPlayer *ffp = opaque;
+    FFPlayer *ffp = opaque;///#AudioCallback#
     VideoState *is = ffp->is;
     int audio_size, len1;
     if (!ffp || !is) {
@@ -2684,7 +2684,7 @@ static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wante
     wanted_spec.format = AUDIO_S16SYS;
     wanted_spec.silence = 0;
     wanted_spec.samples = FFMAX(SDL_AUDIO_MIN_BUFFER_SIZE, 2 << av_log2(wanted_spec.freq / SDL_AoutGetAudioPerSecondCallBacks(ffp->aout)));
-    wanted_spec.callback = sdl_audio_callback;
+    wanted_spec.callback = sdl_audio_callback;///#AudioCallback#
     wanted_spec.userdata = opaque;
     while (SDL_AoutOpenAudio(ffp->aout, &wanted_spec, &spec) < 0) {
         /* avoid infinity loop on exit. --by bbcallen */

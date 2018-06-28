@@ -60,6 +60,18 @@ static GLsizei yuv420sp_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOve
     return overlay->pitches[0] / 1;
 }
 
+static GLubyte* yuv420sp_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+    if (!overlay)
+        return NULL;
+    
+    if (outWidth) *outWidth = overlay->pitches[0];
+    if (outHeight) *outHeight = overlay->h;
+    if (outLength) *outLength = overlay->pitches[0] * overlay->h;
+    if (outIsCopied) *outIsCopied = false;
+    
+    return overlay->pixels[0];
+}
+
 static GLboolean yuv420sp_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
 {
     if (!renderer || !overlay)
@@ -116,6 +128,7 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420sp()
     renderer->func_use            = yuv420sp_use;
     renderer->func_getBufferWidth = yuv420sp_getBufferWidth;
     renderer->func_uploadTexture  = yuv420sp_uploadTexture;
+    renderer->func_getLuminanceDataPointer = yuv420sp_getLuminanceDataPointer;
 
     return renderer;
 fail:

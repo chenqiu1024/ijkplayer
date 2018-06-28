@@ -64,7 +64,7 @@
         /* Get the current format */
         AudioStreamBasicDescription streamDescription;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &streamDescription);
-
+        //#AudioCallback#Resample#
         SDL_CalculateAudioSpec(&_spec);
 
         if (_spec.size == 0) {

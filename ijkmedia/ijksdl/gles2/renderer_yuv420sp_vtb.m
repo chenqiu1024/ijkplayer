@@ -75,6 +75,35 @@ static GLsizei yuv420sp_vtb_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_Vou
     return overlay->pitches[0] / 1;
 }
 
+static GLubyte* yuv420sp_vtb_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+    if (!overlay)
+        return NULL;
+    
+    CVPixelBufferRef pixelBuffer = SDL_VoutOverlayVideoToolBox_GetCVPixelBufferRef(overlay);
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    if (outWidth) *outWidth = (GLsizei)CVPixelBufferGetWidth(pixelBuffer);
+    GLsizei height = (GLsizei)CVPixelBufferGetHeight(pixelBuffer);
+    if (outHeight) *outHeight = height;
+    uint8_t* lumaBuffer = (uint8_t*)CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    GLubyte* ret = (GLubyte*)malloc(bytesPerRow * height);
+    memcpy(ret, lumaBuffer, bytesPerRow * height);
+    if (outLength) *outLength = bytesPerRow * height;
+    if (outIsCopied) *outIsCopied = true;
+//    CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
+//    CGContextRef context = CGBitmapContextCreate(lumaBuffer, width, height, 8, bytesPerRow, grayColorSpace,0);
+//    CGImageRef cgImage = CGBitmapContextCreateImage(context);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    
+//    CGDataProviderRef provider = CGImageGetDataProvider(cgImage);
+//    NSData* faceImageData = (__bridge_transfer NSData*)CGDataProviderCopyData(provider);
+//
+//    CGImageRelease(cgImage);
+//    CGContextRelease(context);
+//    CGColorSpaceRelease(grayColorSpace);
+    return ret;
+}
+
 static GLboolean yuv420sp_vtb_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
 {
     if (!renderer || !renderer->opaque || !overlay)
@@ -229,6 +258,7 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420sp_vtb(SDL_VoutOverlay *over
     renderer->func_use            = yuv420sp_vtb_use;
     renderer->func_getBufferWidth = yuv420sp_vtb_getBufferWidth;
     renderer->func_uploadTexture  = yuv420sp_vtb_uploadTexture;
+    renderer->func_getLuminanceDataPointer = yuv420sp_vtb_getLuminanceDataPointer;
     renderer->func_destroy        = yuv420sp_vtb_destroy;
 
     renderer->opaque = calloc(1, sizeof(IJK_GLES2_Renderer_Opaque));

@@ -54,6 +54,18 @@ static GLsizei rgb565_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOverl
     return overlay->pitches[0] / 2;
 }
 
+static GLubyte* rgb565_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+    if (!overlay)
+        return NULL;
+    
+    if (outWidth) *outWidth = overlay->pitches[0] / 2;
+    if (outHeight) *outHeight = overlay->h;
+    if (outLength) *outLength = overlay->pitches[0] * overlay->h;
+    if (outIsCopied) *outIsCopied = false;
+    
+    return overlay->pixels[0];
+}
+
 static GLboolean rgb565_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
 {
     if (!renderer || !overlay)
@@ -103,6 +115,7 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgb565()
     renderer->func_use            = rgb_use;
     renderer->func_getBufferWidth = rgb565_getBufferWidth;
     renderer->func_uploadTexture  = rgb565_uploadTexture;
+    renderer->func_getLuminanceDataPointer = rgb565_getLuminanceDataPointer;
 
     return renderer;
 fail:
@@ -118,6 +131,18 @@ static GLsizei rgb888_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOverl
         return 0;
 
     return overlay->pitches[0] / 3;
+}
+
+static GLubyte* rgb888_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+    if (!overlay)
+        return NULL;
+    
+    if (outWidth) *outWidth = overlay->pitches[0] / 3;
+    if (outHeight) *outHeight = overlay->h;
+    if (outLength) *outLength = overlay->pitches[0] * overlay->h;
+    if (outIsCopied) *outIsCopied = false;
+    
+    return overlay->pixels[0];
 }
 
 static GLboolean rgb888_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
@@ -169,6 +194,7 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgb888()
     renderer->func_use            = rgb_use;
     renderer->func_getBufferWidth = rgb888_getBufferWidth;
     renderer->func_uploadTexture  = rgb888_uploadTexture;
+    renderer->func_getLuminanceDataPointer = rgb888_getLuminanceDataPointer;
 
     return renderer;
 fail:
@@ -184,6 +210,18 @@ static GLsizei rgbx8888_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOve
         return 0;
 
     return overlay->pitches[0] / 4;
+}
+
+static GLubyte* rgbx8888_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+    if (!overlay)
+        return NULL;
+    
+    if (outWidth) *outWidth = overlay->pitches[0] / 4;
+    if (outHeight) *outHeight = overlay->h;
+    if (outLength) *outLength = overlay->pitches[0] * overlay->h;
+    if (outIsCopied) *outIsCopied = false;
+    
+    return overlay->pixels[0];
 }
 
 static GLboolean rgbx8888_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
@@ -235,6 +273,7 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgbx8888()
     renderer->func_use            = rgb_use;
     renderer->func_getBufferWidth = rgbx8888_getBufferWidth;
     renderer->func_uploadTexture  = rgbx8888_uploadTexture;
+    renderer->func_getLuminanceDataPointer = rgbx8888_getLuminanceDataPointer;
 
     return renderer;
 fail:

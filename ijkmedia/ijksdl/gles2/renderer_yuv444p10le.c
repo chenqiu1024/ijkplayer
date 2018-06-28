@@ -56,6 +56,18 @@ static GLsizei yuv444p10le_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_Vout
     return overlay->pitches[0] / 2;
 }
 
+static GLubyte* yuv444p10le_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+    if (!overlay)
+        return NULL;
+    
+    if (outWidth) *outWidth = overlay->pitches[0] / 2;
+    if (outHeight) *outHeight = overlay->h;
+    if (outLength) *outLength = overlay->pitches[0] * overlay->h;
+    if (outIsCopied) *outIsCopied = false;
+    
+    return overlay->pixels[0];
+}
+
 static GLboolean yuv444p10le_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
 {
     if (!renderer || !overlay)
@@ -109,6 +121,7 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv444p10le()
     renderer->func_use            = yuv444p10le_use;
     renderer->func_getBufferWidth = yuv444p10le_getBufferWidth;
     renderer->func_uploadTexture  = yuv444p10le_uploadTexture;
+    renderer->func_getLuminanceDataPointer = yuv444p10le_getLuminanceDataPointer;
 
     return renderer;
 fail:

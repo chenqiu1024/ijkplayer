@@ -2581,7 +2581,6 @@ reload:
 /* prepare a new audio buffer */
 static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams)
 {
-    void* origOpaque = opaque;
     Uint8* origStream = stream;
     int origLen = len;
 
@@ -2656,7 +2655,7 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSp
 finally:
     if (ffp && ffp->audioCallback)
     {//#AudioCallback#
-        ffp->audioCallback(origOpaque, origStream, origLen, audioParams);
+        ffp->audioCallback(ffp->audioCallbackUserData, origStream, origLen, audioParams);
     }
     return;
 }
@@ -2695,8 +2694,8 @@ static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wante
     wanted_spec.format = AUDIO_S16SYS;
     wanted_spec.silence = 0;
     wanted_spec.samples = FFMAX(SDL_AUDIO_MIN_BUFFER_SIZE, 2 << av_log2(wanted_spec.freq / SDL_AoutGetAudioPerSecondCallBacks(ffp->aout)));
-    wanted_spec.callback = sdl_audio_callback;///#AudioCallback#
-    wanted_spec.userdata = opaque;
+    wanted_spec.callback = sdl_audio_callback;
+    wanted_spec.userdata = opaque;///#AudioCallback#Resample#
     while (SDL_AoutOpenAudio(ffp->aout, &wanted_spec, &spec) < 0) {
         /* avoid infinity loop on exit. --by bbcallen */
         if (is->abort_request)
@@ -2850,7 +2849,7 @@ static int stream_component_open(FFPlayer *ffp, int stream_index)
             channel_layout = av_buffersink_get_channel_layout(sink);
         }
 #else
-        sample_rate    = avctx->sample_rate;
+            sample_rate    = 16000;///!!!#AudioCallback#Resample# avctx->sample_rate;
         nb_channels    = avctx->channels;
         channel_layout = avctx->channel_layout;
 #endif
@@ -3914,7 +3913,11 @@ void ffp_destroy(FFPlayer *ffp)
 
     msg_queue_destroy(&ffp->msg_queue);
 
-
+    if (ffp->audioCallbackUserDataRelease)
+    {
+        ffp->audioCallbackUserDataRelease(ffp->audioCallbackUserData);
+    }
+    
     av_free(ffp);
 }
 

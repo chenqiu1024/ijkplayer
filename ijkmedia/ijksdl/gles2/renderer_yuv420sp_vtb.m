@@ -88,7 +88,7 @@ static GLubyte* yuv420sp_vtb_getLuminanceDataPointer(GLsizei* outWidth, GLsizei*
     size_t bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
     GLubyte* ret = (GLubyte*)malloc(bytesPerRow * height);
     memcpy(ret, lumaBuffer, bytesPerRow * height);
-    if (outLength) *outLength = bytesPerRow * height;
+    if (outLength) *outLength = (GLsizei)(bytesPerRow * height);
     if (outIsCopied) *outIsCopied = true;
 //    CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
 //    CGContextRef context = CGBitmapContextCreate(lumaBuffer, width, height, 8, bytesPerRow, grayColorSpace,0);

@@ -23,7 +23,7 @@
 
 static GLboolean yuv420p_use(IJK_GLES2_Renderer *renderer)
 {
-    ALOGI("use render yuv420p\n");
+//    ALOGI("use render yuv420p\n");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glUseProgram(renderer->program);            IJK_GLES2_checkError_TRACE("glUseProgram");

@@ -1293,6 +1293,7 @@ static void video_refresh(FFPlayer *opaque, double *remaining_time)
         *remaining_time = FFMIN(*remaining_time, is->last_vis_time + ffp->rdftspeed - time);
     }
 
+    bool shouldReserverForceRefresh = false;
     if (is->video_st) {
 retry:
         if (frame_queue_nb_remaining(&is->pictq) == 0) {
@@ -1383,9 +1384,19 @@ retry:
 display:
         /* display picture */
         if (!ffp->display_disable && is->force_refresh && is->show_mode == SHOW_MODE_VIDEO && is->pictq.rindex_shown)
+        {
+            is->force_refresh = 0;
             video_display2(ffp);
+            if (is->force_refresh)
+            {
+                shouldReserverForceRefresh = true;
+            }
+        }
     }
-    is->force_refresh = 0;
+    if (!shouldReserverForceRefresh)
+    {
+        is->force_refresh = 0;
+    }
     if (ffp->show_status) {
         static int64_t last_time;
         int64_t cur_time;

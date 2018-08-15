@@ -310,8 +310,8 @@ static struct playlist *new_playlist(HLSContext *c, const char *url,
         return NULL;
     reset_packet(&pls->pkt);
     ff_make_absolute_url(pls->url, sizeof(pls->url), base, url);
-    pls->seek_timestamp = AV_NOPTS_VALUE;
-
+    //    pls->seek_timestamp = AV_NOPTS_VALUE;
+    // https://github.com/Bilibili/ijkplayer/issues/324
     pls->is_id3_timestamped = -1;
     pls->id3_mpegts_timestamp = AV_NOPTS_VALUE;
 

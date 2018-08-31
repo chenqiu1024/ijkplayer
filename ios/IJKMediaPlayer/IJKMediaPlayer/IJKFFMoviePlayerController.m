@@ -1513,7 +1513,7 @@ static int onInjectOnHttpEvent(IJKFFMoviePlayerController *mpc, int type, void *
             elapsed = calculateElapsed(monitor.httpOpenTick, SDL_GetTickHR());
             monitor.httpError = realData->error;
             monitor.httpCode  = realData->http_code;
-            monitor.filesize  = realData->filesize;
+            ///!!!monitor.filesize  = realData->filesize;
             monitor.httpOpenCount++;
             monitor.httpOpenTick = 0;
             monitor.lastHttpOpenDuration = elapsed;
@@ -1525,7 +1525,7 @@ static int onInjectOnHttpEvent(IJKFFMoviePlayerController *mpc, int type, void *
                 dict[IJKMediaEventAttrKey_host]             = [NSString ijk_stringBeEmptyIfNil:host];
                 dict[IJKMediaEventAttrKey_error]            = @(realData->error).stringValue;
                 dict[IJKMediaEventAttrKey_http_code]        = @(realData->http_code).stringValue;
-                dict[IJKMediaEventAttrKey_file_size]        = @(realData->filesize).stringValue;
+                ///!!!dict[IJKMediaEventAttrKey_file_size]        = @(realData->filesize).stringValue;
                 [delegate invoke:type attributes:dict];
             }
             break;

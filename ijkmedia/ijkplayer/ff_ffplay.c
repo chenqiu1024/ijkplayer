@@ -2734,6 +2734,12 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSp
             SDL_Delay(20);
         }
     }
+    
+finally:
+    if (ffp && ffp->audioCallback)
+    {//#AudioCallback#
+        ffp->audioCallback(ffp->audioCallbackUserData, origStream, origLen, audioParams);
+    }
 }
 
 static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wanted_nb_channels, int wanted_sample_rate, struct AudioParams *audio_hw_params)

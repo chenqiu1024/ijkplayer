@@ -16,7 +16,7 @@
  */
 
 #import "IJKMediaControl.h"
-#import <IJKMediaFramework/IJKMediaFramework.h>
+#import <IJKMediaFrameworkWithSSL/IJKMediaFrameworkWithSSL.h>
 
 @implementation IJKMediaControl
 {

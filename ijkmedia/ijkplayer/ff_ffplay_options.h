@@ -83,7 +83,7 @@ static const AVOption ffp_context_options[] = {
     { "seek-at-start",                  "set offset of player should be seeked",
         OPTION_OFFSET(seek_at_start),       OPTION_INT64(0, 0, INT_MAX) },
     { "subtitle",                       "decode subtitle stream",
-        OPTION_OFFSET(subtitle),        OPTION_INT(0, 0, 1) },
+        OPTION_OFFSET(subtitle),        OPTION_INT(1, 0, 1) },
     // FFP_MERGE: window_title
 #if CONFIG_AVFILTER
     { "af",                             "audio filters",
@@ -150,7 +150,7 @@ static const AVOption ffp_context_options[] = {
         OPTION_OFFSET(preset_5_1_center_mix_level), OPTION_DOUBLE(M_SQRT1_2, -32, 32) },
 
     { "enable-accurate-seek",                      "enable accurate seek",
-        OPTION_OFFSET(enable_accurate_seek),       OPTION_INT(0, 0, 1) },
+        OPTION_OFFSET(enable_accurate_seek),       OPTION_INT(1, 0, 1) },
     { "accurate-seek-timeout",                      "accurate seek timeout",
         OPTION_OFFSET(accurate_seek_timeout),       OPTION_INT(MAX_ACCURATE_SEEK_TIMEOUT, 0, MAX_ACCURATE_SEEK_TIMEOUT) },
     { "skip-calc-frame-rate",                      "don't calculate real frame rate",

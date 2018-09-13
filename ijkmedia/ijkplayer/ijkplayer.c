@@ -301,6 +301,7 @@ void ijkmp_shutdown_l(IjkMediaPlayer *mp)
     MPTRACE("ijkmp_shutdown_l()\n");
     if (mp->ffplayer) {
         ffp_stop_l(mp->ffplayer);
+        printf("\n#Crash# ffp_wait_stop_l(mp->ffplayer); mp->ffplayer->is = %ld\n", (long)(void*)mp->ffplayer->is);
         ffp_wait_stop_l(mp->ffplayer);
     }
     MPTRACE("ijkmp_shutdown_l()=void\n");

@@ -23,7 +23,7 @@
 
 static GLboolean yuv420p_use(IJK_GLES2_Renderer *renderer)
 {
-    ALOGI("use render yuv420p\n");
+//    ALOGI("use render yuv420p\n");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glUseProgram(renderer->program);            IJK_GLES2_checkError_TRACE("glUseProgram");
@@ -54,6 +54,18 @@ static GLsizei yuv420p_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOver
         return 0;
 
     return overlay->pitches[0] / 1;
+}
+
+static GLubyte* yuv420p_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+    if (!overlay)
+        return NULL;
+    
+    if (outWidth) *outWidth = overlay->pitches[0];
+    if (outHeight) *outHeight = overlay->h;
+    if (outLength) *outLength = overlay->pitches[0] * overlay->h;
+    if (outIsCopied) *outIsCopied = false;
+    
+    return overlay->pixels[0];
 }
 
 static GLboolean yuv420p_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
@@ -113,6 +125,7 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420p()
     renderer->func_use            = yuv420p_use;
     renderer->func_getBufferWidth = yuv420p_getBufferWidth;
     renderer->func_uploadTexture  = yuv420p_uploadTexture;
+    renderer->func_getLuminanceDataPointer = yuv420p_getLuminanceDataPointer;
 
     return renderer;
 fail:

@@ -136,7 +136,7 @@
     if (!_audioQueueRef)
         return;
 
-    self.spec.callback(self.spec.userdata, NULL, 0, self.spec.audioParams);
+    self.spec.callback(self.spec.userdata, NULL, 0, 0.0, self.spec.audioParams);
 
     @synchronized(_lock) {
         _isPaused = NO;
@@ -240,7 +240,7 @@ static void IJKSDLAudioQueueOuptutCallback(void * inUserData, AudioQueueRef inAQ
         } else if (aqController->_isPaused || aqController->_isStopped) {
             memset(inBuffer->mAudioData, aqController.spec.silence, inBuffer->mAudioDataByteSize);
         } else {
-            (*aqController.spec.callback)(aqController.spec.userdata, inBuffer->mAudioData, inBuffer->mAudioDataByteSize, aqController.spec.audioParams);
+            (*aqController.spec.callback)(aqController.spec.userdata, inBuffer->mAudioData, inBuffer->mAudioDataByteSize, -1.0, aqController.spec.audioParams);
         }
 
         AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);

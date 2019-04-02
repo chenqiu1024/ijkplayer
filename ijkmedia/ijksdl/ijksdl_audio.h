@@ -86,7 +86,7 @@ typedef struct SDL_AudioSpecParamsStruct
 } SDL_AudioSpecParams;
 
 typedef void (*SDL_AudioCallback) (void* userdata, Uint8 * stream,
-                                   int len, SDL_AudioSpecParams audioParams);
+                                   int len, double presentTime, SDL_AudioSpecParams audioParams);
 
 typedef struct SDL_AudioSpec
 {

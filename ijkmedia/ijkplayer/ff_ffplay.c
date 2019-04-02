@@ -2590,7 +2590,7 @@ reload:
 }
 
 /* prepare a new audio buffer */
-static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams)
+static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, double presentTime, SDL_AudioSpecParams audioParams)
 {
     Uint8* origStream = stream;
     int origLen = len;
@@ -2604,6 +2604,7 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSp
     }
 
     ffp->audio_callback_time = av_gettime_relative();
+//    printf("#AudioFrame# audio_callback_time = %lld, at %d in %s\n", ffp->audio_callback_time, __LINE__, __PRETTY_FUNCTION__);
 
     if (ffp->pf_playback_rate_changed) {
         ffp->pf_playback_rate_changed = 0;
@@ -2666,7 +2667,7 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSp
 finally:
     if (ffp && ffp->audioCallback)
     {//#AudioCallback#
-        ffp->audioCallback(ffp->audioCallbackUserData, origStream, origLen, audioParams);
+        ffp->audioCallback(ffp->audioCallbackUserData, origStream, origLen, ffp->is->audio_clock, audioParams);
     }
     return;
 }

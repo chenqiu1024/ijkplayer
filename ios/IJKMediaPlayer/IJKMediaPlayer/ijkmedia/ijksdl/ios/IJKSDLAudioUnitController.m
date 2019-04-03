@@ -129,6 +129,8 @@
 
         SDL_CalculateAudioSpec(&_spec);
 
+//        AudioUnitSetParameter(auUnit, kAudioUnitParameterUnit_Rate, kAudioUnitScope_Input, 1, 2.0f, 0);
+        
         /* AU initiliaze */
         status = AudioUnitInitialize(auUnit);
         if (status != noErr) {
@@ -210,6 +212,35 @@
     _auUnit = NULL;
 }
 
+- (void)setPlaybackRate:(float)playbackRate
+{
+//    if (fabsf(playbackRate - 1.0f) <= 0.000001) {
+//        UInt32 propValue = 1;
+//        AudioQueueSetProperty(_audioQueueRef, kAudioQueueProperty_TimePitchBypass, &propValue, sizeof(propValue));
+//        AudioQueueSetParameter(_audioQueueRef, kAudioQueueParam_PlayRate, 1.0f);
+//    } else {
+//        UInt32 propValue = 0;
+//        AudioQueueSetProperty(_audioQueueRef, kAudioQueueProperty_TimePitchBypass, &propValue, sizeof(propValue));
+//        AudioQueueSetParameter(_audioQueueRef, kAudioQueueParam_PlayRate, playbackRate);
+//    }
+}
+
+- (void)setPlaybackVolume:(float)playbackVolume
+{
+//    float aq_volume = playbackVolume;
+//    if (fabsf(aq_volume - 1.0f) <= 0.000001) {
+//        AudioQueueSetParameter(_audioQueueRef, kAudioQueueParam_Volume, 1.f);
+//    } else {
+//        AudioQueueSetParameter(_audioQueueRef, kAudioQueueParam_Volume, aq_volume);
+//    }
+}
+
+- (double)get_latency_seconds
+{
+//    return ((double)(kIJKAudioQueueNumberBuffers)) * _spec.samples / _spec.freq;
+    return ((double)(3)) * _spec.samples / _spec.freq;
+}
+
 static OSStatus RenderCallback(void                        *inRefCon,
                                AudioUnitRenderActionFlags  *ioActionFlags,
                                const AudioTimeStamp        *inTimeStamp,
@@ -230,7 +261,7 @@ static OSStatus RenderCallback(void                        *inRefCon,
 
         for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
             AudioBuffer *ioBuffer = &ioData->mBuffers[i];
-            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, 0.0, auController.spec.audioParams);
+            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, 0.0, 0.0, auController.spec.audioParams);
         }
         //#AudioCallback#
         return noErr;

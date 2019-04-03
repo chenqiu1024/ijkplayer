@@ -31,6 +31,10 @@
 
 - (id)initWithAudioSpec:(const SDL_AudioSpec *)aSpec;
 
+- (void)setPlaybackRate:(float)playbackRate;
+- (void)setPlaybackVolume:(float)playbackVolume;
+- (double)get_latency_seconds;
+
 - (void)play;
 - (void)pause;
 - (void)flush;

@@ -2566,6 +2566,7 @@ reload:
         is->audio_clock = af->pts + (double) af->frame->nb_samples / af->frame->sample_rate;
     else
         is->audio_clock = NAN;
+    is->audio_dts = (double)af->frame->pkt_dts / af->frame->sample_rate;
     is->audio_clock_serial = af->serial;
 #ifdef FFP_SHOW_AUDIO_DELAY
     {
@@ -2590,7 +2591,7 @@ reload:
 }
 
 /* prepare a new audio buffer */
-static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, double presentTime, SDL_AudioSpecParams audioParams)
+static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, double presentTime, double decodeTime, SDL_AudioSpecParams audioParams)
 {
     Uint8* origStream = stream;
     int origLen = len;
@@ -2667,7 +2668,7 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, double pres
 finally:
     if (ffp && ffp->audioCallback)
     {//#AudioCallback#
-        ffp->audioCallback(ffp->audioCallbackUserData, origStream, origLen, ffp->is->audio_clock, audioParams);
+        ffp->audioCallback(ffp->audioCallbackUserData, origStream, origLen, ffp->is->audio_clock, ffp->is->audio_dts, audioParams);
     }
     return;
 }

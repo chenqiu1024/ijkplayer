@@ -88,31 +88,31 @@
         OSStatus status;
         
         UInt32 flag = 1;
-        status = AudioUnitSetProperty(outputUnit,
-                                      kAudioOutputUnitProperty_EnableIO,
-                                      kAudioUnitScope_Output,
-                                      0,
-                                      &flag,
-                                      sizeof(flag));
-        status = AudioUnitSetProperty(outputUnit,
-                                      kAudioOutputUnitProperty_EnableIO,
-                                      kAudioUnitScope_Input,
-                                      0,
-                                      &flag,
-                                      sizeof(flag));
-        
-        status = AudioUnitSetProperty(mixerUnit,
-                                      kAudioOutputUnitProperty_EnableIO,
-                                      kAudioUnitScope_Output,
-                                      0,
-                                      &flag,
-                                      sizeof(flag));
-        status = AudioUnitSetProperty(mixerUnit,
-                                      kAudioOutputUnitProperty_EnableIO,
-                                      kAudioUnitScope_Input,
-                                      0,
-                                      &flag,
-                                      sizeof(flag));
+//        status = AudioUnitSetProperty(outputUnit,
+//                                      kAudioOutputUnitProperty_EnableIO,
+//                                      kAudioUnitScope_Output,
+//                                      0,
+//                                      &flag,
+//                                      sizeof(flag));
+//        status = AudioUnitSetProperty(outputUnit,
+//                                      kAudioOutputUnitProperty_EnableIO,
+//                                      kAudioUnitScope_Input,
+//                                      0,
+//                                      &flag,
+//                                      sizeof(flag));
+//
+//        status = AudioUnitSetProperty(mixerUnit,
+//                                      kAudioOutputUnitProperty_EnableIO,
+//                                      kAudioUnitScope_Output,
+//                                      0,
+//                                      &flag,
+//                                      sizeof(flag));
+//        status = AudioUnitSetProperty(mixerUnit,
+//                                      kAudioOutputUnitProperty_EnableIO,
+//                                      kAudioUnitScope_Input,
+//                                      0,
+//                                      &flag,
+//                                      sizeof(flag));
 //        UInt32 maximumFramesPerSlice = 4096;
 //        status = AudioUnitSetProperty(mixerUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFramesPerSlice, sizeof(maximumFramesPerSlice));
 
@@ -130,12 +130,12 @@
                                       0,
                                       &streamDescription,
                                       i_param_size);
-        status = AudioUnitSetProperty(outputUnit,
-                                      kAudioUnitProperty_StreamFormat,
-                                      kAudioUnitScope_Input,
-                                      0,
-                                      &streamDescription,
-                                      i_param_size);
+//        status = AudioUnitSetProperty(outputUnit,
+//                                      kAudioUnitProperty_StreamFormat,
+//                                      kAudioUnitScope_Input,
+//                                      0,
+//                                      &streamDescription,
+//                                      i_param_size);
         
         AURenderCallbackStruct callback;
         callback.inputProc = (AURenderCallback) RenderCallback;

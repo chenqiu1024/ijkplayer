@@ -74,14 +74,21 @@
 //        outputACDesc.componentFlagsMask = 0;
         IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &outputACDesc);
         
+//        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &mixerACDesc);
+        
         AUGraphAddNode(_auGraph, &outputACDesc, &outputNode);
+        AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
+        AUGraphConnectNodeInput(_auGraph, mixerNode, 0, outputNode, 0);
         
         AUGraphOpen(_auGraph);
         
         AUGraphNodeInfo(_auGraph, outputNode, NULL, &outputUnit);
+        AUGraphNodeInfo(_auGraph, mixerNode, NULL, &mixerUnit);
+        
+        OSStatus status;
         
         UInt32 flag = 1;
-        OSStatus status = AudioUnitSetProperty(outputUnit,
+        status = AudioUnitSetProperty(outputUnit,
                                       kAudioOutputUnitProperty_EnableIO,
                                       kAudioUnitScope_Output,
                                       0,
@@ -94,6 +101,21 @@
                                       &flag,
                                       sizeof(flag));
         
+        status = AudioUnitSetProperty(mixerUnit,
+                                      kAudioOutputUnitProperty_EnableIO,
+                                      kAudioUnitScope_Output,
+                                      0,
+                                      &flag,
+                                      sizeof(flag));
+        status = AudioUnitSetProperty(mixerUnit,
+                                      kAudioOutputUnitProperty_EnableIO,
+                                      kAudioUnitScope_Input,
+                                      0,
+                                      &flag,
+                                      sizeof(flag));
+//        UInt32 maximumFramesPerSlice = 4096;
+//        status = AudioUnitSetProperty(mixerUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFramesPerSlice, sizeof(maximumFramesPerSlice));
+
         /* Get the current format */
         _spec.format = AUDIO_S16SYS;
         _spec.channels = 2;
@@ -102,6 +124,12 @@
         
         /* Set the desired format */
         UInt32 i_param_size = sizeof(streamDescription);
+        status = AudioUnitSetProperty(mixerUnit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Input,
+                                      0,
+                                      &streamDescription,
+                                      i_param_size);
         status = AudioUnitSetProperty(outputUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
@@ -112,7 +140,7 @@
         AURenderCallbackStruct callback;
         callback.inputProc = (AURenderCallback) RenderCallback;
         callback.inputProcRefCon = (__bridge void*) self;
-        AUGraphSetNodeInputCallback(_auGraph, outputNode, 0, &callback);
+        AUGraphSetNodeInputCallback(_auGraph, mixerNode, 0, &callback);
         
         SDL_CalculateAudioSpec(&_spec);
         

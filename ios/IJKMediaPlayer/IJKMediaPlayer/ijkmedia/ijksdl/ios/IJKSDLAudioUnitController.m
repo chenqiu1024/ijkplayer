@@ -30,7 +30,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 const int BuffersCount = 1;
-const int BufferSize = 1024 * 2 * sizeof(SInt16) * 10;
+const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
 
 @interface IJKSDLAudioUnitController ()
 
@@ -143,7 +143,7 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 10;
         _audioBufferList->mNumberBuffers = BuffersCount;
         for (int i=0; i<BuffersCount; ++i)
         {
-            _audioBufferList->mBuffers[i].mNumberChannels = _spec.channels;
+            _audioBufferList->mBuffers[i].mNumberChannels = 1;///!!!_spec.channels;
             _audioBufferList->mBuffers[i].mDataByteSize = BufferSize;
             _audioBufferList->mBuffers[i].mData = malloc(BufferSize);
         }
@@ -162,6 +162,15 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 10;
                                       0,
                                       &streamDescription,
                                       i_param_size);
+        
+        streamDescription.mSampleRate = 44100;
+//        streamDescription.mFormatID = kAudioFormatLinearPCM;
+//        streamDescription.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsNonInterleaved;
+        streamDescription.mFramesPerPacket = 1;
+        streamDescription.mChannelsPerFrame = 1;
+        streamDescription.mBytesPerPacket = 2;
+        streamDescription.mBytesPerFrame = 2;
+        streamDescription.mBitsPerChannel = 16;
         status = AudioUnitSetProperty(_outputUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
@@ -421,7 +430,7 @@ static OSStatus InputCallback(void                        *inRefCon,
 {
     @autoreleasepool {
         IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
-        auController.audioBufferList->mNumberBuffers = 1;
+//        auController.audioBufferList->mNumberBuffers = 1;
         OSStatus status = AudioUnitRender(auController.outputUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
         if (status != noErr)
         {

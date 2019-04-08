@@ -29,6 +29,9 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+const int BuffersCount = 1;
+const int BufferSize = 1024 * 2 * sizeof(SInt16) * 10;
+
 @interface IJKSDLAudioUnitController ()
 
 @property (nonatomic, assign) AudioUnit outputUnit;
@@ -115,12 +118,12 @@
 //                                      &flag,
 //                                      sizeof(flag));
 //
-//        status = AudioUnitSetProperty(mixerUnit,
-//                                      kAudioOutputUnitProperty_EnableIO,
-//                                      kAudioUnitScope_Output,
-//                                      0,
-//                                      &flag,
-//                                      sizeof(flag));
+        status = AudioUnitSetProperty(_outputUnit,
+                                      kAudioOutputUnitProperty_EnableIO,
+                                      kAudioUnitScope_Output,
+                                      0,
+                                      &flag,
+                                      sizeof(flag));
 //        status = AudioUnitSetProperty(mixerUnit,
 //                                      kAudioOutputUnitProperty_EnableIO,
 //                                      kAudioUnitScope_Input,
@@ -135,9 +138,7 @@
         _spec.channels = 2;
         AudioStreamBasicDescription streamDescription;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &streamDescription);
-        
-        const int BuffersCount = 3;
-        const int BufferSize = 1048576;
+
         _audioBufferList = (AudioBufferList*)malloc(sizeof(AudioBufferList) + sizeof(AudioBuffer) * (BuffersCount - 1));
         _audioBufferList->mNumberBuffers = BuffersCount;
         for (int i=0; i<BuffersCount; ++i)
@@ -158,6 +159,12 @@
         status = AudioUnitSetProperty(_outputUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
+                                      0,
+                                      &streamDescription,
+                                      i_param_size);
+        status = AudioUnitSetProperty(_outputUnit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Output,
                                       1,
                                       &streamDescription,
                                       i_param_size);
@@ -414,14 +421,15 @@ static OSStatus InputCallback(void                        *inRefCon,
 {
     @autoreleasepool {
         IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
+        auController.audioBufferList->mNumberBuffers = 1;
         OSStatus status = AudioUnitRender(auController.outputUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
         if (status != noErr)
         {
-            NSLog(@"#RecordCallback# AudioUnitRender error:%d", status);
+            NSLog(@"#RecordCallback# AudioUnitRender error:%d, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", status, inBusNumber, inNumberFrames, (long)ioData);
         }
         else
         {
-            NSLog(@"#RecordCallback# AudioUnitRender success.");
+            NSLog(@"#RecordCallback# AudioUnitRender success. inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", inBusNumber, inNumberFrames, (long)ioData);
         }
 //        if (!auController || auController->_isPaused) {
 //            for (UInt32 i = 0; i < ioData->mNumberBuffers; i++) {

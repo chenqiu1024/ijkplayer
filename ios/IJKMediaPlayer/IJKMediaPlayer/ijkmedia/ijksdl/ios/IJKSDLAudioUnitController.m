@@ -88,32 +88,32 @@
 //        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &inputACDesc);
         
         
-        AUGraphAddNode(_auGraph, &inputACDesc, &inputNode);
+//        AUGraphAddNode(_auGraph, &inputACDesc, &inputNode);
         AUGraphAddNode(_auGraph, &outputACDesc, &outputNode);
         AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
         AUGraphConnectNodeInput(_auGraph, mixerNode, 0, outputNode, 0);
         
         AUGraphOpen(_auGraph);
         
-        AUGraphNodeInfo(_auGraph, inputNode, NULL, &_inputUnit);
+//        AUGraphNodeInfo(_auGraph, inputNode, NULL, &_inputUnit);
         AUGraphNodeInfo(_auGraph, outputNode, NULL, &_outputUnit);
         AUGraphNodeInfo(_auGraph, mixerNode, NULL, &_mixerUnit);
         
         OSStatus status;
         
         UInt32 flag = 1;
-//        status = AudioUnitSetProperty(outputUnit,
-//                                      kAudioOutputUnitProperty_EnableIO,
-//                                      kAudioUnitScope_Output,
-//                                      0,
-//                                      &flag,
-//                                      sizeof(flag));
-        status = AudioUnitSetProperty(_inputUnit,
+        status = AudioUnitSetProperty(_outputUnit,
                                       kAudioOutputUnitProperty_EnableIO,
                                       kAudioUnitScope_Input,
                                       1,
                                       &flag,
                                       sizeof(flag));
+//        status = AudioUnitSetProperty(_inputUnit,
+//                                      kAudioOutputUnitProperty_EnableIO,
+//                                      kAudioUnitScope_Input,
+//                                      1,
+//                                      &flag,
+//                                      sizeof(flag));
 //
 //        status = AudioUnitSetProperty(mixerUnit,
 //                                      kAudioOutputUnitProperty_EnableIO,
@@ -155,7 +155,7 @@
                                       0,
                                       &streamDescription,
                                       i_param_size);
-        status = AudioUnitSetProperty(_inputUnit,
+        status = AudioUnitSetProperty(_outputUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
                                       1,
@@ -167,11 +167,11 @@
         callback.inputProcRefCon = (__bridge void*) self;
         AUGraphSetNodeInputCallback(_auGraph, mixerNode, 0, &callback);
         
-//        AURenderCallbackStruct inputCallback;
-//        inputCallback.inputProc = (AURenderCallback) InputCallback;
-//        inputCallback.inputProcRefCon = (__bridge void*) self;
-//        status = AudioUnitSetProperty(_inputUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Input, 1, &inputCallback, sizeof(inputCallback));
-//        NSLog(@"#RecordCallback# AudioUnitSetProperty(...kAudioOutputUnitProperty_SetInputCallback...)=%d", status);
+        AURenderCallbackStruct inputCallback;
+        inputCallback.inputProc = (AURenderCallback) InputCallback;
+        inputCallback.inputProcRefCon = (__bridge void*) self;
+        status = AudioUnitSetProperty(_outputUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Output, 1, &inputCallback, sizeof(inputCallback));
+        NSLog(@"#RecordCallback# AudioUnitSetProperty(...kAudioOutputUnitProperty_SetInputCallback...)=%d", status);
 
         SDL_CalculateAudioSpec(&_spec);
         
@@ -414,7 +414,7 @@ static OSStatus InputCallback(void                        *inRefCon,
 {
     @autoreleasepool {
         IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
-        OSStatus status = AudioUnitRender(auController.mixerUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
+        OSStatus status = AudioUnitRender(auController.outputUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
         if (status != noErr)
         {
             NSLog(@"#RecordCallback# AudioUnitRender error:%d", status);

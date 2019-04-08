@@ -29,6 +29,17 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+@interface IJKSDLAudioUnitController ()
+
+@property (nonatomic, assign) AudioUnit outputUnit;
+@property (nonatomic, assign) AudioUnit muxerUnit;
+@property (nonatomic, assign) AudioUnit mixerUnit;
+@property (nonatomic, assign) AudioUnit inputUnit;
+
+@property (nonatomic, assign) AudioBufferList* audioBufferList;
+
+@end
+
 @implementation IJKSDLAudioUnitController {
 //    AudioUnit _auUnit;
     AUGraph _auGraph;
@@ -55,18 +66,18 @@
             return nil;
         }
 
-        AudioUnit outputUnit, mixerUnit, inputUnit;
         NewAUGraph(&_auGraph);
         
         AUNode outputNode, mixerNode, inputNode;
         AudioComponentDescription outputACDesc, mixerACDesc, inputACDesc;
         
+//        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &mixerACDesc);
         mixerACDesc.componentType = kAudioUnitType_Mixer;
         mixerACDesc.componentSubType = kAudioUnitSubType_MultiChannelMixer;
         mixerACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
         mixerACDesc.componentFlags = 0;
         mixerACDesc.componentFlagsMask = 0;
-
+        
 //        outputACDesc.componentType = kAudioUnitType_Output;
 //        outputACDesc.componentSubType = kAudioUnitSubType_RemoteIO;
 //        outputACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
@@ -74,16 +85,19 @@
 //        outputACDesc.componentFlagsMask = 0;
         IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &outputACDesc);
         
-//        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &mixerACDesc);
+//        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &inputACDesc);
         
+        
+        AUGraphAddNode(_auGraph, &inputACDesc, &inputNode);
         AUGraphAddNode(_auGraph, &outputACDesc, &outputNode);
         AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
         AUGraphConnectNodeInput(_auGraph, mixerNode, 0, outputNode, 0);
         
         AUGraphOpen(_auGraph);
         
-        AUGraphNodeInfo(_auGraph, outputNode, NULL, &outputUnit);
-        AUGraphNodeInfo(_auGraph, mixerNode, NULL, &mixerUnit);
+        AUGraphNodeInfo(_auGraph, inputNode, NULL, &_inputUnit);
+        AUGraphNodeInfo(_auGraph, outputNode, NULL, &_outputUnit);
+        AUGraphNodeInfo(_auGraph, mixerNode, NULL, &_mixerUnit);
         
         OSStatus status;
         
@@ -94,12 +108,12 @@
 //                                      0,
 //                                      &flag,
 //                                      sizeof(flag));
-//        status = AudioUnitSetProperty(outputUnit,
-//                                      kAudioOutputUnitProperty_EnableIO,
-//                                      kAudioUnitScope_Input,
-//                                      0,
-//                                      &flag,
-//                                      sizeof(flag));
+        status = AudioUnitSetProperty(_inputUnit,
+                                      kAudioOutputUnitProperty_EnableIO,
+                                      kAudioUnitScope_Input,
+                                      1,
+                                      &flag,
+                                      sizeof(flag));
 //
 //        status = AudioUnitSetProperty(mixerUnit,
 //                                      kAudioOutputUnitProperty_EnableIO,
@@ -122,26 +136,43 @@
         AudioStreamBasicDescription streamDescription;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &streamDescription);
         
+        const int BuffersCount = 3;
+        const int BufferSize = 1048576;
+        _audioBufferList = (AudioBufferList*)malloc(sizeof(AudioBufferList) + sizeof(AudioBuffer) * (BuffersCount - 1));
+        _audioBufferList->mNumberBuffers = BuffersCount;
+        for (int i=0; i<BuffersCount; ++i)
+        {
+            _audioBufferList->mBuffers[i].mNumberChannels = _spec.channels;
+            _audioBufferList->mBuffers[i].mDataByteSize = BufferSize;
+            _audioBufferList->mBuffers[i].mData = malloc(BufferSize);
+        }
+        
         /* Set the desired format */
         UInt32 i_param_size = sizeof(streamDescription);
-        status = AudioUnitSetProperty(mixerUnit,
+        status = AudioUnitSetProperty(_mixerUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
                                       0,
                                       &streamDescription,
                                       i_param_size);
-//        status = AudioUnitSetProperty(outputUnit,
-//                                      kAudioUnitProperty_StreamFormat,
-//                                      kAudioUnitScope_Input,
-//                                      0,
-//                                      &streamDescription,
-//                                      i_param_size);
+        status = AudioUnitSetProperty(_inputUnit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Input,
+                                      1,
+                                      &streamDescription,
+                                      i_param_size);
         
         AURenderCallbackStruct callback;
         callback.inputProc = (AURenderCallback) RenderCallback;
         callback.inputProcRefCon = (__bridge void*) self;
         AUGraphSetNodeInputCallback(_auGraph, mixerNode, 0, &callback);
         
+//        AURenderCallbackStruct inputCallback;
+//        inputCallback.inputProc = (AURenderCallback) InputCallback;
+//        inputCallback.inputProcRefCon = (__bridge void*) self;
+//        status = AudioUnitSetProperty(_inputUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Input, 1, &inputCallback, sizeof(inputCallback));
+//        NSLog(@"#RecordCallback# AudioUnitSetProperty(...kAudioOutputUnitProperty_SetInputCallback...)=%d", status);
+
         SDL_CalculateAudioSpec(&_spec);
         
         AUGraphInitialize(_auGraph);
@@ -305,6 +336,16 @@
 //    _auUnit = NULL;
     AUGraphClose(_auGraph);
     _auGraph = NULL;
+    
+    if (self.audioBufferList)
+    {
+        for (int i=0; i<_audioBufferList->mNumberBuffers; ++i)
+        {
+            if (_audioBufferList->mBuffers[i].mData)
+                free(_audioBufferList->mBuffers[i].mData);
+        }
+        free(_audioBufferList);
+    }
 }
 
 - (void)setPlaybackRate:(float)playbackRate
@@ -347,6 +388,7 @@ static OSStatus RenderCallback(void                        *inRefCon,
         IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
 
         if (!auController || auController->_isPaused) {
+            *ioActionFlags |= kAudioUnitRenderAction_OutputIsSilence;
             for (UInt32 i = 0; i < ioData->mNumberBuffers; i++) {
                 AudioBuffer *ioBuffer = &ioData->mBuffers[i];
                 memset(ioBuffer->mData, auController.spec.silence, ioBuffer->mDataByteSize);
@@ -358,6 +400,41 @@ static OSStatus RenderCallback(void                        *inRefCon,
             AudioBuffer *ioBuffer = &ioData->mBuffers[i];
             (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, 0.0, 0.0, auController.spec.audioParams);
         }
+        //#AudioCallback#
+        return noErr;
+    }
+}
+
+static OSStatus InputCallback(void                        *inRefCon,
+                               AudioUnitRenderActionFlags  *ioActionFlags,
+                               const AudioTimeStamp        *inTimeStamp,
+                               UInt32                      inBusNumber,
+                               UInt32                      inNumberFrames,
+                               AudioBufferList             *ioData)
+{
+    @autoreleasepool {
+        IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
+        OSStatus status = AudioUnitRender(auController.mixerUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
+        if (status != noErr)
+        {
+            NSLog(@"#RecordCallback# AudioUnitRender error:%d", status);
+        }
+        else
+        {
+            NSLog(@"#RecordCallback# AudioUnitRender success.");
+        }
+//        if (!auController || auController->_isPaused) {
+//            for (UInt32 i = 0; i < ioData->mNumberBuffers; i++) {
+//                AudioBuffer *ioBuffer = &ioData->mBuffers[i];
+//                memset(ioBuffer->mData, auController.spec.silence, ioBuffer->mDataByteSize);
+//            }
+//            return noErr;
+//        }
+//
+//        for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
+//            AudioBuffer *ioBuffer = &ioData->mBuffers[i];
+//            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, 0.0, 0.0, auController.spec.audioParams);
+//        }
         //#AudioCallback#
         return noErr;
     }

@@ -166,11 +166,11 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
         streamDescription.mSampleRate = 44100;
 //        streamDescription.mFormatID = kAudioFormatLinearPCM;
 //        streamDescription.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsNonInterleaved;
-        streamDescription.mFramesPerPacket = 1;
+//        streamDescription.mFramesPerPacket = 1;
         streamDescription.mChannelsPerFrame = 1;
         streamDescription.mBytesPerPacket = 2;
         streamDescription.mBytesPerFrame = 2;
-        streamDescription.mBitsPerChannel = 16;
+//        streamDescription.mBitsPerChannel = 16;
         status = AudioUnitSetProperty(_outputUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,

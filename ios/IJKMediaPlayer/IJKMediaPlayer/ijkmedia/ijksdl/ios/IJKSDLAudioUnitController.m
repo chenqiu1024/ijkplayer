@@ -35,9 +35,9 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
 @interface IJKSDLAudioUnitController ()
 
 @property (nonatomic, assign) AudioUnit outputUnit;
-@property (nonatomic, assign) AudioUnit muxerUnit;
+@property (nonatomic, assign) AudioUnit resampleUnit;
 @property (nonatomic, assign) AudioUnit mixerUnit;
-@property (nonatomic, assign) AudioUnit inputUnit;
+//@property (nonatomic, assign) AudioUnit inputUnit;
 
 @property (nonatomic, assign) AudioBufferList* audioBufferList;
 
@@ -71,8 +71,10 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
 
         NewAUGraph(&_auGraph);
         
-        AUNode outputNode, mixerNode, inputNode;
-        AudioComponentDescription outputACDesc, mixerACDesc, inputACDesc;
+        AUNode outputNode, mixerNode, resampleNode;
+//        AUNode inputNode;
+        AudioComponentDescription outputACDesc, mixerACDesc, resampleACDesc;
+//        AUNode inputACDesc;
         
 //        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &mixerACDesc);
         mixerACDesc.componentType = kAudioUnitType_Mixer;
@@ -81,26 +83,30 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
         mixerACDesc.componentFlags = 0;
         mixerACDesc.componentFlagsMask = 0;
         
-//        outputACDesc.componentType = kAudioUnitType_Output;
-//        outputACDesc.componentSubType = kAudioUnitSubType_RemoteIO;
-//        outputACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
-//        outputACDesc.componentFlags = 0;
-//        outputACDesc.componentFlagsMask = 0;
         IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &outputACDesc);
         
 //        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &inputACDesc);
-        
+
+        resampleACDesc.componentType = kAudioUnitType_FormatConverter;
+        resampleACDesc.componentSubType = kAudioUnitSubType_AUConverter;
+        resampleACDesc.componentFlags = 0;
+        resampleACDesc.componentFlagsMask = 0;
+        resampleACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
         
 //        AUGraphAddNode(_auGraph, &inputACDesc, &inputNode);
         AUGraphAddNode(_auGraph, &outputACDesc, &outputNode);
+        AUGraphAddNode(_auGraph, &resampleACDesc, &resampleNode);
         AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
         AUGraphConnectNodeInput(_auGraph, mixerNode, 0, outputNode, 0);
+        AUGraphConnectNodeInput(_auGraph, outputNode, 0, resampleNode, 0);
+//        AUGraphConnectNodeInput(_auGraph, resampleNode, 0, mixerNode, 1);
         
         AUGraphOpen(_auGraph);
         
 //        AUGraphNodeInfo(_auGraph, inputNode, NULL, &_inputUnit);
         AUGraphNodeInfo(_auGraph, outputNode, NULL, &_outputUnit);
         AUGraphNodeInfo(_auGraph, mixerNode, NULL, &_mixerUnit);
+        AUGraphNodeInfo(_auGraph, resampleNode, NULL, &_resampleUnit);
         
         OSStatus status;
         
@@ -117,7 +123,7 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
 //                                      1,
 //                                      &flag,
 //                                      sizeof(flag));
-//
+
         status = AudioUnitSetProperty(_outputUnit,
                                       kAudioOutputUnitProperty_EnableIO,
                                       kAudioUnitScope_Output,
@@ -143,40 +149,41 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
         _audioBufferList->mNumberBuffers = BuffersCount;
         for (int i=0; i<BuffersCount; ++i)
         {
-            _audioBufferList->mBuffers[i].mNumberChannels = 1;///!!!_spec.channels;
+            _audioBufferList->mBuffers[i].mNumberChannels = 1;
             _audioBufferList->mBuffers[i].mDataByteSize = BufferSize;
             _audioBufferList->mBuffers[i].mData = malloc(BufferSize);
         }
         
         /* Set the desired format */
-        UInt32 i_param_size = sizeof(streamDescription);
+        UInt32 sizeOfASBD = sizeof(AudioStreamBasicDescription);
         status = AudioUnitSetProperty(_mixerUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
                                       0,
                                       &streamDescription,
-                                      i_param_size);
+                                      sizeOfASBD);
         status = AudioUnitSetProperty(_outputUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
                                       0,
                                       &streamDescription,
-                                      i_param_size);
+                                      sizeOfASBD);
         
-        streamDescription.mSampleRate = 44100;
-//        streamDescription.mFormatID = kAudioFormatLinearPCM;
-//        streamDescription.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsNonInterleaved;
-//        streamDescription.mFramesPerPacket = 1;
-        streamDescription.mChannelsPerFrame = 1;
-        streamDescription.mBytesPerPacket = 2;
-        streamDescription.mBytesPerFrame = 2;
-//        streamDescription.mBitsPerChannel = 16;
+        AudioStreamBasicDescription micInASBD = streamDescription;
+        micInASBD.mSampleRate = 44100;
+//        micInASBD.mFormatID = kAudioFormatLinearPCM;
+//        micInASBD.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsNonInterleaved;
+//        micInASBD.mFramesPerPacket = 1;
+        micInASBD.mChannelsPerFrame = 1;
+        micInASBD.mBytesPerPacket = 2;
+        micInASBD.mBytesPerFrame = 2;
+//        micInASBD.mBitsPerChannel = 16;
         status = AudioUnitSetProperty(_outputUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
                                       1,
-                                      &streamDescription,
-                                      i_param_size);
+                                      &micInASBD,
+                                      sizeOfASBD);
         
         AURenderCallbackStruct callback;
         callback.inputProc = (AURenderCallback) RenderCallback;
@@ -189,6 +196,14 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
         status = AudioUnitSetProperty(_outputUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Output, 1, &inputCallback, sizeof(inputCallback));
         NSLog(@"#RecordCallback# AudioUnitSetProperty(...kAudioOutputUnitProperty_SetInputCallback...)=%d", status);
 
+        AudioStreamBasicDescription ioASBDIn;
+        AudioStreamBasicDescription ioASBDOut;
+        AudioUnitGetProperty(_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 1, &ioASBDIn, &sizeOfASBD);
+        AudioUnitGetProperty(_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &ioASBDOut, &sizeOfASBD);
+        
+        AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioASBDIn, sizeOfASBD);
+        AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &ioASBDOut, sizeOfASBD);
+        
         SDL_CalculateAudioSpec(&_spec);
         
         AUGraphInitialize(_auGraph);

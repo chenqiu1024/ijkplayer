@@ -29,8 +29,8 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-const int BuffersCount = 1;
-const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
+//const int BuffersCount = 1;
+//const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
 
 @interface IJKSDLAudioUnitController ()
 
@@ -39,7 +39,7 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
 @property (nonatomic, assign) AudioUnit mixerUnit;
 //@property (nonatomic, assign) AudioUnit inputUnit;
 
-@property (nonatomic, assign) AudioBufferList* audioBufferList;
+//@property (nonatomic, assign) AudioBufferList* audioBufferList;
 
 @end
 
@@ -136,14 +136,14 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
         AudioStreamBasicDescription streamDescription;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &streamDescription);
 
-        _audioBufferList = (AudioBufferList*)malloc(sizeof(AudioBufferList) + sizeof(AudioBuffer) * (BuffersCount - 1));
-        _audioBufferList->mNumberBuffers = BuffersCount;
-        for (int i=0; i<BuffersCount; ++i)
-        {
-            _audioBufferList->mBuffers[i].mNumberChannels = 1;
-            _audioBufferList->mBuffers[i].mDataByteSize = BufferSize;
-            _audioBufferList->mBuffers[i].mData = malloc(BufferSize);
-        }
+//        _audioBufferList = (AudioBufferList*)malloc(sizeof(AudioBufferList) + sizeof(AudioBuffer) * (BuffersCount - 1));
+//        _audioBufferList->mNumberBuffers = BuffersCount;
+//        for (int i=0; i<BuffersCount; ++i)
+//        {
+//            _audioBufferList->mBuffers[i].mNumberChannels = 1;
+//            _audioBufferList->mBuffers[i].mDataByteSize = BufferSize;
+//            _audioBufferList->mBuffers[i].mData = malloc(BufferSize);
+//        }
         
         /* Set the desired format */
         UInt32 sizeOfASBD = sizeof(AudioStreamBasicDescription);
@@ -364,15 +364,15 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
     AUGraphClose(_auGraph);
     _auGraph = NULL;
     
-    if (self.audioBufferList)
-    {
-        for (int i=0; i<_audioBufferList->mNumberBuffers; ++i)
-        {
-            if (_audioBufferList->mBuffers[i].mData)
-                free(_audioBufferList->mBuffers[i].mData);
-        }
-        free(_audioBufferList);
-    }
+//    if (self.audioBufferList)
+//    {
+//        for (int i=0; i<_audioBufferList->mNumberBuffers; ++i)
+//        {
+//            if (_audioBufferList->mBuffers[i].mData)
+//                free(_audioBufferList->mBuffers[i].mData);
+//        }
+//        free(_audioBufferList);
+//    }
 }
 
 - (void)setPlaybackRate:(float)playbackRate

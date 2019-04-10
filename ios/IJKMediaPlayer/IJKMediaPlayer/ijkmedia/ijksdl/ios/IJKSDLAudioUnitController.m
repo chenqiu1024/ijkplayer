@@ -99,7 +99,7 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
         AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
         AUGraphConnectNodeInput(_auGraph, mixerNode, 0, outputNode, 0);
         AUGraphConnectNodeInput(_auGraph, outputNode, 1, resampleNode, 0);
-//        AUGraphConnectNodeInput(_auGraph, resampleNode, 0, mixerNode, 1);
+        AUGraphConnectNodeInput(_auGraph, resampleNode, 0, mixerNode, 1);
         
         AUGraphOpen(_auGraph);
         

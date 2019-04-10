@@ -130,14 +130,18 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
                                       0,
                                       &flag,
                                       sizeof(flag));
+
 //        status = AudioUnitSetProperty(mixerUnit,
 //                                      kAudioOutputUnitProperty_EnableIO,
 //                                      kAudioUnitScope_Input,
 //                                      0,
 //                                      &flag,
 //                                      sizeof(flag));
-//        UInt32 maximumFramesPerSlice = 4096;
-//        status = AudioUnitSetProperty(mixerUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFramesPerSlice, sizeof(maximumFramesPerSlice));
+        UInt32 busCount = 2;
+        status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_ElementCount, kAudioUnitScope_Input, 0, &busCount, sizeof(busCount));
+        
+        UInt32 maximumFramesPerSlice = 4096;
+        status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFramesPerSlice, sizeof(maximumFramesPerSlice));
 
         /* Get the current format */
         _spec.format = AUDIO_S16SYS;
@@ -184,29 +188,37 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
                                       1,
                                       &micInASBD,
                                       sizeOfASBD);
+        status = AudioUnitSetProperty(_outputUnit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Input,
+                                      1,
+                                      &streamDescription,
+                                      sizeOfASBD);
         
         AURenderCallbackStruct callback;
         callback.inputProc = (AURenderCallback) RenderCallback;
         callback.inputProcRefCon = (__bridge void*) self;
         AUGraphSetNodeInputCallback(_auGraph, mixerNode, 0, &callback);
         
+        AudioStreamBasicDescription ioASBDIn;
+        AudioStreamBasicDescription ioASBDOut;
+        AudioUnitGetProperty(_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &ioASBDIn, &sizeOfASBD);
+        AudioUnitGetProperty(_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioASBDOut, &sizeOfASBD);
+        
+        status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioASBDIn, sizeOfASBD);
+        status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &ioASBDOut, sizeOfASBD);
+        
         AURenderCallbackStruct inputCallback;
         inputCallback.inputProc = (AURenderCallback) InputCallback;
         inputCallback.inputProcRefCon = (__bridge void*) self;
-        status = AudioUnitSetProperty(_outputUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Output, 1, &inputCallback, sizeof(inputCallback));
+        status = AudioUnitSetProperty(_outputUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 1, &inputCallback, sizeof(inputCallback));
         NSLog(@"#RecordCallback# AudioUnitSetProperty(...kAudioOutputUnitProperty_SetInputCallback...)=%d", status);
-
-        AudioStreamBasicDescription ioASBDIn;
-        AudioStreamBasicDescription ioASBDOut;
-        AudioUnitGetProperty(_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 1, &ioASBDIn, &sizeOfASBD);
-        AudioUnitGetProperty(_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &ioASBDOut, &sizeOfASBD);
-        
-        AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioASBDIn, sizeOfASBD);
-        AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &ioASBDOut, sizeOfASBD);
         
         SDL_CalculateAudioSpec(&_spec);
         
         AUGraphInitialize(_auGraph);
+        
+        CAShow(_auGraph);
         
         ////////////////////
 //        AudioComponentDescription desc;

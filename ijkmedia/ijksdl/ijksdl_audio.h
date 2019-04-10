@@ -85,8 +85,7 @@ typedef struct SDL_AudioSpecParamsStruct
     Uint32 size;                /**< Audio buffer size in bytes (calculated) */
 } SDL_AudioSpecParams;
 
-typedef void (*SDL_AudioCallback) (void* userdata, Uint8 * stream,
-                                   int len, double presentTime, double decodeTime, SDL_AudioSpecParams audioParams);
+typedef void (*SDL_AudioCallback) (void* userdata, Uint8 * stream, int len, SDL_AudioSpecParams audioParams);
 
 typedef struct SDL_AudioSpec
 {
@@ -105,6 +104,7 @@ typedef struct SDL_AudioSpec
         };///#AudioCallback#
     };
     SDL_AudioCallback callback;
+    SDL_AudioCallback audioMixedCallback;
     void *userdata;
 } SDL_AudioSpec;
 

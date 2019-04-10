@@ -425,7 +425,7 @@ static OSStatus RenderCallback(void                        *inRefCon,
 
         for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
             AudioBuffer *ioBuffer = &ioData->mBuffers[i];
-            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, 0.0, 0.0, auController.spec.audioParams);
+            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
         }
         //#AudioCallback#
         return noErr;
@@ -461,10 +461,14 @@ static OSStatus InputCallback(void                        *inRefCon,
 //            return noErr;
 //        }
 //
-//        for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
-//            AudioBuffer *ioBuffer = &ioData->mBuffers[i];
-//            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, 0.0, 0.0, auController.spec.audioParams);
-//        }
+        if (!ioData)
+            return noErr;
+        
+        for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
+            AudioBuffer *ioBuffer = &ioData->mBuffers[i];
+            (*auController.spec.audioMixedCallback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
+        }
+        
         //#AudioCallback#
         return noErr;
     }

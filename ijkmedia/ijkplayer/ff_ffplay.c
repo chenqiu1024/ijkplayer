@@ -2591,7 +2591,7 @@ reload:
 }
 
 /* prepare a new audio buffer */
-static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, double presentTime, double decodeTime, SDL_AudioSpecParams audioParams)
+static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams)
 {
     Uint8* origStream = stream;
     int origLen = len;
@@ -2666,13 +2666,21 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, double pres
     }
     
 finally:
-    if (ffp && ffp->audioCallback)
+    if (ffp && ffp->audioDecodeCallback.callbackFunction)
     {//#AudioCallback#
-        ffp->audioCallback(ffp->audioCallbackUserData, origStream, origLen, ffp->is->audio_clock, ffp->is->audio_dts, audioParams);
+        ffp->audioDecodeCallback.callbackFunction(ffp->audioDecodeCallback.contextData, origStream, origLen, audioParams);
     }
     return;
 }
 
+static void sdl_audio_mixed_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams) {
+    FFPlayer *ffp = opaque;///#AudioCallback#
+    if (ffp && ffp->audioMixedCallback.callbackFunction)
+    {//#AudioCallback#
+        ffp->audioMixedCallback.callbackFunction(ffp->audioMixedCallback.contextData, stream, len, audioParams);
+    }
+}
+    
 static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wanted_nb_channels, int wanted_sample_rate, struct AudioParams *audio_hw_params)
 {
     FFPlayer *ffp = opaque;
@@ -2708,6 +2716,7 @@ static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wante
     wanted_spec.silence = 0;
     wanted_spec.samples = FFMAX(SDL_AUDIO_MIN_BUFFER_SIZE, 2 << av_log2(wanted_spec.freq / SDL_AoutGetAudioPerSecondCallBacks(ffp->aout)));
     wanted_spec.callback = sdl_audio_callback;
+    wanted_spec.audioMixedCallback = sdl_audio_mixed_callback;
     wanted_spec.userdata = opaque;///#AudioCallback#Resample#
     while (SDL_AoutOpenAudio(ffp->aout, &wanted_spec, &spec) < 0) {
         /* avoid infinity loop on exit. --by bbcallen */
@@ -3926,9 +3935,13 @@ void ffp_destroy(FFPlayer *ffp)
 
     msg_queue_destroy(&ffp->msg_queue);
 
-    if (ffp->audioCallbackUserDataRelease)
+    if (ffp->audioDecodeCallback.contextDataReleaseFunction)
     {
-        ffp->audioCallbackUserDataRelease(ffp->audioCallbackUserData);
+        ffp->audioDecodeCallback.contextDataReleaseFunction(ffp->audioDecodeCallback.contextData);
+    }
+    if (ffp->audioMixedCallback.contextDataReleaseFunction)
+    {
+        ffp->audioMixedCallback.contextDataReleaseFunction(ffp->audioMixedCallback.contextData);
     }
     
     av_free(ffp);

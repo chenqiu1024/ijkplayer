@@ -194,8 +194,9 @@ const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
         AURenderCallbackStruct inputCallback;
         inputCallback.inputProc = (AURenderCallback) InputCallback;
         inputCallback.inputProcRefCon = (__bridge void*) self;
-        status = AudioUnitSetProperty(_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 1, &inputCallback, sizeof(inputCallback));
-        NSLog(@"#RecordCallback# AudioUnitSetProperty(...kAudioOutputUnitProperty_SetInputCallback...)=%d", status);
+        status = AudioUnitAddRenderNotify(_mixerUnit, (AURenderCallback)InputCallback, (__bridge void*)self);
+//        status = AudioUnitSetProperty(_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 1, &inputCallback, sizeof(inputCallback));
+        NSLog(@"#RecordCallback# Set render notify = %d", status);
         
         SDL_CalculateAudioSpec(&_spec);
         
@@ -440,17 +441,18 @@ static OSStatus InputCallback(void                        *inRefCon,
 {
     @autoreleasepool {
         IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
-//        auController.audioBufferList->mNumberBuffers = 1;
-        inBusNumber = 0;///!!!
-        OSStatus status = AudioUnitRender(auController.resampleUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
-        if (status != noErr)
-        {
-            NSLog(@"#RecordCallback# AudioUnitRender error:%d, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", status, inBusNumber, inNumberFrames, (long)ioData);
-        }
-        else
-        {
-            NSLog(@"#RecordCallback# AudioUnitRender success. inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", inBusNumber, inNumberFrames, (long)ioData);
-        }
+        NSLog(@"#RecordCallback# AudioUnitRender: inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", inBusNumber, inNumberFrames, (long)ioData);
+//        inBusNumber = 0;///!!!
+//        OSStatus status = AudioUnitRender(auController.resampleUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
+//        if (status != noErr)
+//        {
+//            NSLog(@"#RecordCallback# AudioUnitRender error:%d, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", status, inBusNumber, inNumberFrames, (long)ioData);
+//        }
+//        else
+//        {
+//            NSLog(@"#RecordCallback# AudioUnitRender success. inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", inBusNumber, inNumberFrames, (long)ioData);
+//        }
+
 //        if (!auController || auController->_isPaused) {
 //            for (UInt32 i = 0; i < ioData->mNumberBuffers; i++) {
 //                AudioBuffer *ioBuffer = &ioData->mBuffers[i];

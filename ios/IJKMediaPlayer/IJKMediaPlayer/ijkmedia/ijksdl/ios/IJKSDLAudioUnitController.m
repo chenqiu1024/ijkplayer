@@ -163,7 +163,7 @@
                                       &streamDescription,
                                       sizeOfASBD);
         AudioStreamBasicDescription micInASBD = streamDescription;
-        micInASBD.mSampleRate = _spec.freq;///44100;///
+        micInASBD.mSampleRate = 44100;///_spec.freq;///
 //        micInASBD.mFormatID = kAudioFormatLinearPCM;
 //        micInASBD.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsNonInterleaved;
 //        micInASBD.mFramesPerPacket = 1;

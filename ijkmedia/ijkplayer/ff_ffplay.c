@@ -2871,7 +2871,7 @@ static int stream_component_open(FFPlayer *ffp, int stream_index)
             channel_layout = av_buffersink_get_channel_layout(sink);
         }
 #else
-            sample_rate    = 16000;///!!!#AudioCallback#Resample# avctx->sample_rate;
+            sample_rate    = avctx->sample_rate;///!!! 16000;///!!!#AudioCallback#Resample# 
         nb_channels    = avctx->channels;
         channel_layout = avctx->channel_layout;
 #endif

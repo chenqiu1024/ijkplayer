@@ -133,8 +133,8 @@
         /* Get the current format */
         _spec.format = AUDIO_S16SYS;
         _spec.channels = 2;
-        AudioStreamBasicDescription streamDescription;
-        IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &streamDescription);
+        AudioStreamBasicDescription mediaASBD;
+        IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &mediaASBD);
 
 //        _audioBufferList = (AudioBufferList*)malloc(sizeof(AudioBufferList) + sizeof(AudioBuffer) * (BuffersCount - 1));
 //        _audioBufferList->mNumberBuffers = BuffersCount;
@@ -152,38 +152,56 @@
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
                                       0,
-                                      &streamDescription,
+                                      &mediaASBD,
                                       sizeOfASBD);
         
-        AudioStreamBasicDescription micInASBD = streamDescription;
-        micInASBD.mSampleRate = 44100;///_spec.freq;///
+        double preferredHardwareSampleRate;
+        if ([[AVAudioSession sharedInstance] respondsToSelector:@selector(sampleRate)])
+        {
+            preferredHardwareSampleRate = [[AVAudioSession sharedInstance] sampleRate];
+        }
+        else
+        {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            preferredHardwareSampleRate = [[AVAudioSession sharedInstance] currentHardwareSampleRate];
+#pragma clang diagnostic pop
+        }
+        
+        AudioStreamBasicDescription ioInASBD = mediaASBD;
+        ioInASBD.mSampleRate = preferredHardwareSampleRate;
 //        micInASBD.mFormatID = kAudioFormatLinearPCM;
 //        micInASBD.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsNonInterleaved;
 //        micInASBD.mFramesPerPacket = 1;
-        micInASBD.mChannelsPerFrame = 1;
-        micInASBD.mBytesPerPacket = 2;
-        micInASBD.mBytesPerFrame = 2;
+        ioInASBD.mChannelsPerFrame = 1;
+        ioInASBD.mBytesPerPacket = 2;
+        ioInASBD.mBytesPerFrame = 2;
 //        micInASBD.mBitsPerChannel = 16;
+        
+        AudioStreamBasicDescription ioOutASBD = ioInASBD;
+        ioOutASBD.mChannelsPerFrame = 2;
+        ioOutASBD.mBytesPerPacket = 4;
+        ioOutASBD.mBytesPerFrame = 4;
         
         status = AudioUnitSetProperty(_resampleUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
                                       0,
-                                      &micInASBD,
+                                      &ioOutASBD,
                                       sizeOfASBD);
 
         status = AudioUnitSetProperty(_ioUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
                                       1,
-                                      &micInASBD,
+                                      &ioInASBD,
                                       sizeOfASBD);
         
         status = AudioUnitSetProperty(_mixerUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
                                       0,
-                                      &micInASBD,
+                                      &ioOutASBD,
                                       sizeOfASBD);
 //        double sampleRate = _spec.freq;
 //        status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_SampleRate, kAudioUnitScope_Output, 0, &sampleRate, sizeof(sampleRate));;
@@ -472,9 +490,21 @@ static OSStatus InputCallback(void                        *inRefCon,
 //
         if (!ioData)
             return noErr;
-        
+        static NSUInteger totalDataSize = 0;
+        static NSDate* beginTime;
+        beginTime = [NSDate date];
         for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
             AudioBuffer *ioBuffer = &ioData->mBuffers[i];
+            NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:beginTime];
+            if (timeElapsed > 0)
+            {
+                NSLog(@"#SampleBuffer# AudioBuffer[%d] .channels=%d, .dataSize=%d; totalDataSize=%ld", i, ioBuffer->mNumberChannels, ioBuffer->mDataByteSize, totalDataSize);
+            }
+            else
+            {
+                NSLog(@"#SampleBuffer# AudioBuffer[%d] .channels=%d, .dataSize=%d; ", i, ioBuffer->mNumberChannels, ioBuffer->mDataByteSize);
+            }
+            totalDataSize += ioBuffer->mDataByteSize;
             (*auController.spec.audioMixedCallback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
         }
         

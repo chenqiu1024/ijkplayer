@@ -71,10 +71,8 @@
 
         NewAUGraph(&_auGraph);
         
-        AUNode ioNode, mixerNode, resampleNode;
-//        AUNode inputNode;
-        AudioComponentDescription ioACDesc, mixerACDesc, resampleACDesc;
-//        AUNode inputACDesc;
+        AUNode ioNode, mixerNode, resampleNode, spliterNode;
+        AudioComponentDescription ioACDesc, mixerACDesc, resampleACDesc, spliterACDesc;
         
 //        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &mixerACDesc);
         mixerACDesc.componentType = kAudioUnitType_Mixer;
@@ -84,8 +82,6 @@
         mixerACDesc.componentFlagsMask = 0;
         
         IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &ioACDesc);
-        
-//        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &inputACDesc);
 
         resampleACDesc.componentType = kAudioUnitType_FormatConverter;
         resampleACDesc.componentSubType = kAudioUnitSubType_AUConverter;
@@ -93,17 +89,22 @@
         resampleACDesc.componentFlagsMask = 0;
         resampleACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
         
-//        AUGraphAddNode(_auGraph, &inputACDesc, &inputNode);
+        spliterACDesc.componentType = kAudioUnitType_FormatConverter;
+        spliterACDesc.componentSubType = kAudioUnitSubType_MultiSplitter;
+        spliterACDesc.componentFlags = 0;
+        spliterACDesc.componentFlagsMask = 0;
+        spliterACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
+        
         AUGraphAddNode(_auGraph, &ioACDesc, &ioNode);
         AUGraphAddNode(_auGraph, &resampleACDesc, &resampleNode);
         AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
+        AUGraphAddNode(_auGraph, &spliterACDesc, &spliterNode);
         AUGraphConnectNodeInput(_auGraph, ioNode, 1, mixerNode, 1);
         AUGraphConnectNodeInput(_auGraph, resampleNode, 0, mixerNode, 0);
         AUGraphConnectNodeInput(_auGraph, mixerNode, 0, ioNode, 0);
         
         AUGraphOpen(_auGraph);
         
-//        AUGraphNodeInfo(_auGraph, inputNode, NULL, &_inputUnit);
         AUGraphNodeInfo(_auGraph, ioNode, NULL, &_ioUnit);
         AUGraphNodeInfo(_auGraph, mixerNode, NULL, &_mixerUnit);
         AUGraphNodeInfo(_auGraph, resampleNode, NULL, &_resampleUnit);
@@ -136,15 +137,6 @@
         AudioStreamBasicDescription mediaASBD;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &mediaASBD);
 
-//        _audioBufferList = (AudioBufferList*)malloc(sizeof(AudioBufferList) + sizeof(AudioBuffer) * (BuffersCount - 1));
-//        _audioBufferList->mNumberBuffers = BuffersCount;
-//        for (int i=0; i<BuffersCount; ++i)
-//        {
-//            _audioBufferList->mBuffers[i].mNumberChannels = 1;
-//            _audioBufferList->mBuffers[i].mDataByteSize = BufferSize;
-//            _audioBufferList->mBuffers[i].mData = malloc(BufferSize);
-//        }
-        
         /* Set the desired format */
         UInt32 sizeOfASBD = sizeof(AudioStreamBasicDescription);
         

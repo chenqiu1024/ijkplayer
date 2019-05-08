@@ -601,9 +601,13 @@ static OSStatus MicInputCallback(void                        *inRefCon,
             }
         }
         
+        if (!(*ioActionFlags & kAudioUnitRenderAction_PostRender))
+            return noErr;
+        
         OSStatus status;
-        status = AudioUnitRender(auController.mixerUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
-        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        AudioUnitRenderActionFlags actionFlag = kAudioUnitRenderAction_PostRender;
+        status = AudioUnitRender(auController.mixerUnit, &actionFlag, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
+        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, auController.audioBufferList=0x%lx, at %d in %s", status, (long)auController.audioBufferList, __LINE__, __PRETTY_FUNCTION__);
         return noErr;
     }
 }

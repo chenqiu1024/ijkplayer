@@ -506,7 +506,7 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
                 AudioBuffer audioBuffer = ioData->mBuffers[i];
                 NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
                 if (audioBuffer.mData && (*ioActionFlags & kAudioUnitRenderAction_PreRender))
-                {
+                {//PeriodInSamples = SampleRate / Frequency
 //                    memset(audioBuffer.mData, 0, audioBuffer.mDataByteSize);///!!!
                 }
             }

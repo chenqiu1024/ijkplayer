@@ -505,10 +505,10 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
             {
                 AudioBuffer audioBuffer = ioData->mBuffers[i];
                 NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
-//                if (audioBuffer.mData && (*ioActionFlags & kAudioUnitRenderAction_PreRender))
-//                {
+                if (audioBuffer.mData && (*ioActionFlags & kAudioUnitRenderAction_PreRender))
+                {
 //                    memset(audioBuffer.mData, 0, audioBuffer.mDataByteSize);///!!!
-//                }
+                }
             }
         }
 //        inBusNumber = 0;///!!!
@@ -532,8 +532,10 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
 //
         if (!ioData)
             return noErr;
-        if (!(*ioActionFlags & kAudioUnitRenderAction_PostRender))
-            return noErr;
+//        if (*ioActionFlags & kAudioUnitRenderAction_PreRender)
+//            return noErr;
+//        if (!(*ioActionFlags & kAudioUnitRenderAction_PostRender))
+//            return noErr;
         
         static NSUInteger totalDataSize = 0;
         static NSDate* beginTime;
@@ -549,10 +551,14 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
             {
                 NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback AudioBuffer[%d] .channels=%d, .dataSize=%d; ", i, ioBuffer->mNumberChannels, ioBuffer->mDataByteSize);
             }
-            totalDataSize += ioBuffer->mDataByteSize;
-            (*auController.spec.audioMixedCallback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
+            
+            if (ioBuffer->mData)
+            {
+                totalDataSize += ioBuffer->mDataByteSize;
+                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback TimeStamp = %f", (float)totalDataSize / ioData->mBuffers[0].mNumberChannels / 2 / auController.spec.freq);
+                (*auController.spec.audioMixedCallback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
+            }
         }
-        NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback TimeStamp = %f", (float)totalDataSize / ioData->mBuffers[0].mNumberChannels / 2 / auController.spec.freq);
         //#AudioCallback#
         return noErr;
     }

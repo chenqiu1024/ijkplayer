@@ -216,7 +216,7 @@
                                       &ioOutASBD,
                                       sizeOfASBD);
 
-        status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioOutASBD, sizeOfASBD);
+        status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mediaASBD, sizeOfASBD);
         NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         AURenderCallbackStruct renderAudioSourceCallback;

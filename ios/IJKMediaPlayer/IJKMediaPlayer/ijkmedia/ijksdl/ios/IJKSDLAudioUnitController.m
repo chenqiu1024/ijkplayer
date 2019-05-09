@@ -34,10 +34,10 @@
 
 @interface IJKSDLAudioUnitController ()
 
-@property (nonatomic, assign) AudioUnit ioUnit;
+@property (nonatomic, assign) AudioUnit inputIOUnit;
 @property (nonatomic, assign) AudioUnit resampleUnit;
 @property (nonatomic, assign) AudioUnit mixerUnit;
-//@property (nonatomic, assign) AudioUnit inputUnit;
+@property (nonatomic, assign) AudioUnit outputIOUnit;
 
 @property (nonatomic, assign) AudioBufferList* audioBufferList;
 
@@ -46,6 +46,7 @@
 @implementation IJKSDLAudioUnitController {
 //    AudioUnit _auUnit;
     AUGraph _auGraph;
+    AUGraph _auGraph1;
     BOOL _isPaused;
 }
 
@@ -78,9 +79,13 @@
             _audioBufferList->mBuffers[i].mData = malloc(4096);
         }
         
-        NewAUGraph(&_auGraph);
+        OSStatus status;
         
-        AUNode ioNode, mixerNode, resampleNode, spliterNode;
+        NewAUGraph(&_auGraph);
+        NewAUGraph(&_auGraph1);
+        
+        AUNode inputIONode, mixerNode, resampleNode, spliterNode;
+        AUNode outputIONode;
         AudioComponentDescription ioACDesc, mixerACDesc, resampleACDesc, spliterACDesc;
         
 //        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &mixerACDesc);
@@ -104,35 +109,41 @@
         spliterACDesc.componentFlagsMask = 0;
         spliterACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
         
-        AUGraphAddNode(_auGraph, &ioACDesc, &ioNode);
+        AUGraphAddNode(_auGraph, &ioACDesc, &inputIONode);
         AUGraphAddNode(_auGraph, &resampleACDesc, &resampleNode);
         AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
         AUGraphAddNode(_auGraph, &spliterACDesc, &spliterNode);
-        AUGraphConnectNodeInput(_auGraph, ioNode, 1, mixerNode, 1);
+        AUGraphConnectNodeInput(_auGraph, inputIONode, 1, mixerNode, 1);
         AUGraphConnectNodeInput(_auGraph, resampleNode, 0, mixerNode, 0);
 //        AUGraphConnectNodeInput(_auGraph, mixerNode, 0, ioNode, 0);
+        status = AUGraphAddNode(_auGraph1, &ioACDesc, &outputIONode);
+        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         AUGraphOpen(_auGraph);
+        status = AUGraphOpen(_auGraph1);
+        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
-        AUGraphNodeInfo(_auGraph, ioNode, NULL, &_ioUnit);
+        AUGraphNodeInfo(_auGraph, inputIONode, NULL, &_inputIOUnit);
         AUGraphNodeInfo(_auGraph, mixerNode, NULL, &_mixerUnit);
         AUGraphNodeInfo(_auGraph, resampleNode, NULL, &_resampleUnit);
         
-        OSStatus status;
+        status = AUGraphNodeInfo(_auGraph1, outputIONode, NULL, &_outputIOUnit);
+        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         UInt32 flag = 1;
-        status = AudioUnitSetProperty(_ioUnit,
+        status = AudioUnitSetProperty(_inputIOUnit,
                                       kAudioOutputUnitProperty_EnableIO,
                                       kAudioUnitScope_Input,
                                       1,
                                       &flag,
                                       sizeof(flag));
-        status = AudioUnitSetProperty(_ioUnit,
+        status = AudioUnitSetProperty(_outputIOUnit,
                                       kAudioOutputUnitProperty_EnableIO,
                                       kAudioUnitScope_Output,
                                       0,
                                       &flag,
                                       sizeof(flag));
+        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         UInt32 busCount = 2;
         status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_ElementCount, kAudioUnitScope_Input, 0, &busCount, sizeof(busCount));
@@ -155,6 +166,9 @@
                                       0,
                                       &mediaASBD,
                                       sizeOfASBD);
+        
+        status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &mediaASBD, sizeOfASBD);
+        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         double preferredHardwareSampleRate;
         if ([[AVAudioSession sharedInstance] respondsToSelector:@selector(sampleRate)])
@@ -191,7 +205,7 @@
                                       &ioOutASBD,
                                       sizeOfASBD);
 
-        status = AudioUnitSetProperty(_ioUnit,
+        status = AudioUnitSetProperty(_inputIOUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
                                       1,
@@ -220,7 +234,7 @@
         mixerRenderNotifyCallback.inputProcRefCon = (__bridge void*) self;
         
 //        status = AudioUnitSetProperty(_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 0, &micInputCallback, sizeof(micInputCallback));
-        status = AudioUnitAddRenderNotify(_ioUnit, (AURenderCallback)MicInputCallback, (__bridge void*)self);
+        status = AudioUnitAddRenderNotify(_inputIOUnit, (AURenderCallback)MicInputCallback, (__bridge void*)self);
         NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         status = AudioUnitAddRenderNotify(_mixerUnit, (AURenderCallback)MixerRenderNotifyCallback, (__bridge void*)self);
@@ -229,8 +243,10 @@
         SDL_CalculateAudioSpec(&_spec);
         
         AUGraphInitialize(_auGraph);
+        AUGraphInitialize(_auGraph1);
         
         CAShow(_auGraph);
+        CAShow(_auGraph1);
     }
     return self;
 }
@@ -252,8 +268,9 @@
     }
 
     OSStatus status = AUGraphStart(_auGraph);
-    if (status != noErr)
-        NSLog(@"AudioUnit: AudioOutputUnitStart failed (%d)\n", (int)status);
+    NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+    status = AUGraphStart(_auGraph1);
+    NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
 }
 
 - (void)pause
@@ -265,6 +282,8 @@
     OSStatus status = AUGraphStop(_auGraph);
     if (status != noErr)
         ALOGE("AudioUnit: failed to stop AudioUnit (%d)\n", (int)status);
+    status = AUGraphStop(_auGraph1);
+    NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
 }
 
 - (void)flush
@@ -283,6 +302,8 @@
     OSStatus status = AUGraphStop(_auGraph);
     if (status != noErr)
         ALOGE("AudioUnit: failed to stop AudioUnit (%d)", (int)status);
+    status = AUGraphStop(_auGraph1);
+    NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
 }
 
 - (void)close
@@ -303,6 +324,8 @@
 //    _auUnit = NULL;
     AUGraphClose(_auGraph);
     _auGraph = NULL;
+    AUGraphClose(_auGraph1);
+    _auGraph1 = NULL;
     
     if (_audioBufferList)
     {

@@ -507,10 +507,10 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
                 NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
                 if (audioBuffer.mData && (*ioActionFlags & kAudioUnitRenderAction_PostRender))
                 {//PeriodInSamples = SampleRate / Frequency = 1024 / k, k = 1024 * Frequency / SampleRate
-                    const float F0 = 430.7, F1 = 861.4, A0 = 0.05, A1 = 0.05;
-                    static NSUInteger totalSamples = 0;
-                    ushort* pDst = (ushort*)audioBuffer.mData;
-//                    for (int iSample=0; iSample<inNumberFrames; ++iSample)
+//                    const float F0 = 430.7, F1 = 861.4, A0 = 0.05, A1 = 0.05;
+//                    static NSUInteger totalSamples = 0;
+//                    ushort* pDst = (ushort*)audioBuffer.mData;
+//                    //for (int iSample=0; iSample<inNumberFrames; ++iSample)
 //                    for (int iSample=0; iSample<audioBuffer.mDataByteSize/4; ++iSample)
 //                    {
 //                        totalSamples++;
@@ -519,7 +519,6 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
 //                        float a1 = sinf(2 * M_PI * F1 * totalSamples / 44100.f) * A1;
 //                        *(pDst++) = 32768 * a1 + 32767;
 //                    }
-//                    memset(audioBuffer.mData, 0, audioBuffer.mDataByteSize);///!!!
                 }
             }
         }

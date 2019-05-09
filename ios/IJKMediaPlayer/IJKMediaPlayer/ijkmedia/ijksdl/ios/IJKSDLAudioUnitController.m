@@ -204,23 +204,12 @@
                                       0,
                                       &ioOutASBD,
                                       sizeOfASBD);
-//        double sampleRate = _spec.freq;
-//        status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_SampleRate, kAudioUnitScope_Output, 0, &sampleRate, sizeof(sampleRate));;
 
         AURenderCallbackStruct callback;
         callback.inputProc = (AURenderCallback) RenderCallback;
         callback.inputProcRefCon = (__bridge void*) self;
-//        AUGraphSetNodeInputCallback(_auGraph, resampleNode, 0, &callback);
         status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
-//        status = AudioUnitSetProperty(_resampleUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));///!!!
         NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
-        
-//        AudioStreamBasicDescription ioASBDIn;
-//        AudioStreamBasicDescription ioASBDOut;
-//        AudioUnitGetProperty(_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &ioASBDIn, &sizeOfASBD);
-//        AudioUnitGetProperty(_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioASBDOut, &sizeOfASBD);
-//        status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioASBDIn, sizeOfASBD);
-//        status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &ioASBDOut, sizeOfASBD);
         
         AURenderCallbackStruct micInputCallback;
         micInputCallback.inputProc = (AURenderCallback) MicInputCallback;
@@ -230,112 +219,18 @@
         mixerRenderNotifyCallback.inputProc = (AURenderCallback) MixerRenderNotifyCallback;
         mixerRenderNotifyCallback.inputProcRefCon = (__bridge void*) self;
         
-//        AURenderCallbackStruct mixerRenderCallback;
-//        mixerRenderCallback.inputProc = (AURenderCallback) MixerRenderCallback;
-//        mixerRenderCallback.inputProcRefCon = (__bridge void*) self;
-        
 //        status = AudioUnitSetProperty(_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 0, &micInputCallback, sizeof(micInputCallback));
         status = AudioUnitAddRenderNotify(_ioUnit, (AURenderCallback)MicInputCallback, (__bridge void*)self);
         NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         status = AudioUnitAddRenderNotify(_mixerUnit, (AURenderCallback)MixerRenderNotifyCallback, (__bridge void*)self);
         NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
-//        status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &mixerRenderCallback, sizeof(mixerRenderCallback));
-//        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         SDL_CalculateAudioSpec(&_spec);
         
         AUGraphInitialize(_auGraph);
         
         CAShow(_auGraph);
-        
-        ////////////////////
-//        AudioComponentDescription desc;
-//        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &desc);
-//
-//        AudioComponent auComponent = AudioComponentFindNext(NULL, &desc);
-//        if (auComponent == NULL) {
-//            ALOGE("AudioUnit: AudioComponentFindNext failed");
-//            self = nil;
-//            return nil;
-//        }
-//
-//        AudioUnit auUnit;
-//        OSStatus status = AudioComponentInstanceNew(auComponent, &auUnit);
-//        if (status != noErr) {
-//            ALOGE("AudioUnit: AudioComponentInstanceNew failed");
-//            self = nil;
-//            return nil;
-//        }
-//
-//        UInt32 flag = 1;
-//        status = AudioUnitSetProperty(auUnit,
-//                                      kAudioOutputUnitProperty_EnableIO,
-//                                      kAudioUnitScope_Output,
-//                                      0,
-//                                      &flag,
-//                                      sizeof(flag));
-//        if (status != noErr) {
-//            ALOGE("AudioUnit: failed to set IO mode (%d)", (int)status);
-//        }
-//
-//        /* Get the current format */
-//        _spec.format = AUDIO_S16SYS;
-//        _spec.channels = 2;
-//        AudioStreamBasicDescription streamDescription;
-//        IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &streamDescription);
-//
-//        /* Set the desired format */
-//        UInt32 i_param_size = sizeof(streamDescription);
-//        status = AudioUnitSetProperty(auUnit,
-//                                      kAudioUnitProperty_StreamFormat,
-//                                      kAudioUnitScope_Input,
-//                                      0,
-//                                      &streamDescription,
-//                                      i_param_size);
-//        if (status != noErr) {
-//            ALOGE("AudioUnit: failed to set stream format (%d)", (int)status);
-//            self = nil;
-//            return nil;
-//        }
-//
-//        /* Retrieve actual format */
-//        status = AudioUnitGetProperty(auUnit,
-//                                      kAudioUnitProperty_StreamFormat,
-//                                      kAudioUnitScope_Input,
-//                                      0,
-//                                      &streamDescription,
-//                                      &i_param_size);
-//        if (status != noErr) {
-//            ALOGE("AudioUnit: failed to verify stream format (%d)\n", (int)status);
-//        }
-//
-//        AURenderCallbackStruct callback;
-//        callback.inputProc = (AURenderCallback) RenderCallback;
-//        callback.inputProcRefCon = (__bridge void*) self;
-//        status = AudioUnitSetProperty(auUnit,
-//                                      kAudioUnitProperty_SetRenderCallback,
-//                                      kAudioUnitScope_Input,
-//                                      0, &callback, sizeof(callback));
-//        if (status != noErr) {
-//            ALOGE("AudioUnit: render callback setup failed (%d)\n", (int)status);
-//            self = nil;
-//            return nil;
-//        }
-//
-//        SDL_CalculateAudioSpec(&_spec);
-//
-////        AudioUnitSetParameter(auUnit, kAudioUnitParameterUnit_Rate, kAudioUnitScope_Input, 1, 2.0f, 0);
-//
-//        /* AU initiliaze */
-//        status = AudioUnitInitialize(auUnit);
-//        if (status != noErr) {
-//            ALOGE("AudioUnit: AudioUnitInitialize failed (%d)\n", (int)status);
-//            self = nil;
-//            return nil;
-//        }
-//
-//        _auUnit = auUnit;
     }
     return self;
 }
@@ -522,25 +417,7 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
                 }
             }
         }
-//        inBusNumber = 0;///!!!
-//        OSStatus status = AudioUnitRender(auController.resampleUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
-//        if (status != noErr)
-//        {
-//            NSLog(@"#RecordCallback# AudioUnitRender error:%d, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", status, inBusNumber, inNumberFrames, (long)ioData);
-//        }
-//        else
-//        {
-//            NSLog(@"#RecordCallback# AudioUnitRender success. inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", inBusNumber, inNumberFrames, (long)ioData);
-//        }
-
-//        if (!auController || auController->_isPaused) {
-//            for (UInt32 i = 0; i < ioData->mNumberBuffers; i++) {
-//                AudioBuffer *ioBuffer = &ioData->mBuffers[i];
-//                memset(ioBuffer->mData, auController.spec.silence, ioBuffer->mDataByteSize);
-//            }
-//            return noErr;
-//        }
-//
+        
         if (!ioData)
             return noErr;
         if (*ioActionFlags & kAudioUnitRenderAction_PreRender)
@@ -574,29 +451,6 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
         return noErr;
     }
 }
-
-//static OSStatus MixerRenderCallback(void                        *inRefCon,
-//                                    AudioUnitRenderActionFlags  *ioActionFlags,
-//                                    const AudioTimeStamp        *inTimeStamp,
-//                                    UInt32                      inBusNumber,
-//                                    UInt32                      inNumberFrames,
-//                                    AudioBufferList             *ioData)
-//{
-//    @autoreleasepool {
-//        NSLog(@"#RecordCallback#AudioUnitCallback# MixerRenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
-//        if (ioData)
-//        {
-//            NSLog(@"#RecordCallback#AudioUnitCallback# MixerRenderCallback : numBuffers=%d", ioData->mNumberBuffers);
-//            for (int i=0; i<ioData->mNumberBuffers; ++i)
-//            {
-//                AudioBuffer audioBuffer = ioData->mBuffers[i];
-//                NSLog(@"#RecordCallback#AudioUnitCallback# MixerRenderCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
-//                memset(audioBuffer.mData, 0, audioBuffer.mDataByteSize);
-//            }
-//        }
-//        return noErr;
-//    }
-//}
 
 static OSStatus MicInputCallback(void                        *inRefCon,
                                     AudioUnitRenderActionFlags  *ioActionFlags,

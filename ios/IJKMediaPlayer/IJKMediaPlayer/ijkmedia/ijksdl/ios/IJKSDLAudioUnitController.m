@@ -167,9 +167,6 @@
                                       &mediaASBD,
                                       sizeOfASBD);
         
-        status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &mediaASBD, sizeOfASBD);
-        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
-        
         double preferredHardwareSampleRate;
         if ([[AVAudioSession sharedInstance] respondsToSelector:@selector(sampleRate)])
         {
@@ -219,25 +216,32 @@
                                       &ioOutASBD,
                                       sizeOfASBD);
 
-        AURenderCallbackStruct callback;
-        callback.inputProc = (AURenderCallback) RenderCallback;
-        callback.inputProcRefCon = (__bridge void*) self;
-        status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
+        status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioOutASBD, sizeOfASBD);
+        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        
+        AURenderCallbackStruct renderAudioSourceCallback;
+        renderAudioSourceCallback.inputProc = (AURenderCallback) RenderCallback;
+        renderAudioSourceCallback.inputProcRefCon = (__bridge void*) self;
+        status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &renderAudioSourceCallback, sizeof(renderAudioSourceCallback));
         NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
-        AURenderCallbackStruct micInputCallback;
-        micInputCallback.inputProc = (AURenderCallback) MicInputCallback;
-        micInputCallback.inputProcRefCon = (__bridge void*) self;
-        
-        AURenderCallbackStruct mixerRenderNotifyCallback;
-        mixerRenderNotifyCallback.inputProc = (AURenderCallback) MixerRenderNotifyCallback;
-        mixerRenderNotifyCallback.inputProcRefCon = (__bridge void*) self;
-        
+//        AURenderCallbackStruct micInputCallback;
+//        micInputCallback.inputProc = (AURenderCallback) MicInputCallback;
+//        micInputCallback.inputProcRefCon = (__bridge void*) self;
 //        status = AudioUnitSetProperty(_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 0, &micInputCallback, sizeof(micInputCallback));
         status = AudioUnitAddRenderNotify(_inputIOUnit, (AURenderCallback)MicInputCallback, (__bridge void*)self);
         NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
+//        AURenderCallbackStruct mixerRenderNotifyCallback;
+//        mixerRenderNotifyCallback.inputProc = (AURenderCallback) MixerRenderNotifyCallback;
+//        mixerRenderNotifyCallback.inputProcRefCon = (__bridge void*) self;
         status = AudioUnitAddRenderNotify(_mixerUnit, (AURenderCallback)MixerRenderNotifyCallback, (__bridge void*)self);
+        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        
+        AURenderCallbackStruct outputRenderCallback;
+        outputRenderCallback.inputProc = (AURenderCallback) OutputRenderCallback;
+        outputRenderCallback.inputProcRefCon = (__bridge void*) self;
+        status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &outputRenderCallback, sizeof(outputRenderCallback));
         NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         SDL_CalculateAudioSpec(&_spec);
@@ -402,6 +406,43 @@ static OSStatus RenderCallback(void                        *inRefCon,
             (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
         }
         //#AudioCallback#
+        return noErr;
+    }
+}
+
+static OSStatus OutputRenderCallback(void                        *inRefCon,
+                               AudioUnitRenderActionFlags  *ioActionFlags,
+                               const AudioTimeStamp        *inTimeStamp,
+                               UInt32                      inBusNumber,
+                               UInt32                      inNumberFrames,
+                               AudioBufferList             *ioData)
+{
+    @autoreleasepool {
+        NSLog(@"#AudioUnitCallback# OutputRenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
+        if (ioData)
+        {
+            NSLog(@"#AudioUnitCallback# OutputRenderCallback : numBuffers=%d", ioData->mNumberBuffers);
+            for (int i=0; i<ioData->mNumberBuffers; ++i)
+            {
+                AudioBuffer audioBuffer = ioData->mBuffers[i];
+                NSLog(@"#AudioUnitCallback# OutputRenderCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
+                if (audioBuffer.mData)/// && (*ioActionFlags & kAudioUnitRenderAction_PostRender))
+                {//PeriodInSamples = SampleRate / Frequency = 1024 / k, k = 1024 * Frequency / SampleRate
+                    const float F0 = 430.7, F1 = 861.4, A0 = 0.05, A1 = 0.05;
+                    static NSUInteger totalSamples = 0;
+                    ushort* pDst = (ushort*)audioBuffer.mData;
+                    //for (int iSample=0; iSample<inNumberFrames; ++iSample)
+                    for (int iSample=0; iSample<audioBuffer.mDataByteSize/4; ++iSample)
+                    {
+                        totalSamples++;
+                        float a0 = sinf(2 * M_PI * F0 * totalSamples / 44100.f) * A0;
+                        *(pDst++) = 32768 * a0 + 32767;
+                        float a1 = sinf(2 * M_PI * F1 * totalSamples / 44100.f) * A1;
+                        *(pDst++) = 32768 * a1 + 32767;
+                    }
+                }
+            }
+        }
         return noErr;
     }
 }

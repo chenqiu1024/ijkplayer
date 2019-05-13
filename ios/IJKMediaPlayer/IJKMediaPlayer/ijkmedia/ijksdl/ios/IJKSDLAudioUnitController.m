@@ -26,13 +26,14 @@
 #import "IJKSDLAudioUnitController.h"
 #import "IJKSDLAudioKit.h"
 #include "ijksdl/ijksdl_log.h"
+#import "ijksdl/C2Buffer.h"
 
 #import <AVFoundation/AVFoundation.h>
 
 //const int BuffersCount = 1;
 //const int BufferSize = 1024 * 2 * sizeof(SInt16) * 16;
 
-@interface IJKSDLAudioUnitController ()
+@interface IJKSDLAudioUnitController () <C2BufferDelegate>
 
 @property (nonatomic, assign) AudioUnit inputIOUnit;
 @property (nonatomic, assign) AudioUnit resampleUnit;
@@ -40,6 +41,7 @@
 @property (nonatomic, assign) AudioUnit outputIOUnit;
 
 @property (nonatomic, assign) AudioBufferList* audioBufferList;
+@property (nonatomic, copy) NSArray<C2Buffer* >* c2Buffers;
 
 @end
 
@@ -72,12 +74,17 @@
 
         _audioBufferList = (AudioBufferList*) malloc(sizeof(AudioBufferList));
         _audioBufferList->mNumberBuffers = 1;
+        NSMutableArray* c2Buffers = [[NSMutableArray alloc] init];
         for (int i=0; i<_audioBufferList->mNumberBuffers; ++i)
         {
             _audioBufferList->mBuffers[i].mNumberChannels = 2;
             _audioBufferList->mBuffers[i].mDataByteSize = 4096;
             _audioBufferList->mBuffers[i].mData = malloc(4096);
+            
+            C2Buffer* c2Buffer = [[C2Buffer alloc] initWithSize:4096 delegate:self];
+            [c2Buffers addObject:c2Buffer];
         }
+        _c2Buffers = [NSArray arrayWithArray:c2Buffers];
         
         OSStatus status;
         
@@ -369,6 +376,12 @@
 {
 //    return ((double)(kIJKAudioQueueNumberBuffers)) * _spec.samples / _spec.freq;
     return ((double)(3)) * _spec.samples / _spec.freq;
+}
+
+#pragma mark C2BufferDelegate
+-(size_t) c2BufferFillDataTo:(void*)buffer length:(size_t)length {
+    _spec.callback(_spec.userdata, buffer, (int)length, _spec.audioParams);
+    return length;
 }
 
 static OSStatus RenderCallback(void                        *inRefCon,

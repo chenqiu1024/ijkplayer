@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(size_t) readBytesForConsumer:(int)consumerIndex into:(void*)destBuffer length:(size_t)length isFinal:(BOOL)isFinal;
 
+-(void) finish;
+
 @end
 
 

@@ -73,6 +73,11 @@
     [_cond unlock];
 }
 
+-(void) finish {
+    [self notifyConsumerWillDeactive:0];
+    [self notifyConsumerWillDeactive:1];
+}
+
 -(size_t) readBytesForConsumer:(int)consumerIndex into:(void*)destBuffer length:(size_t)length isFinal:(BOOL)isFinal {
     _isConsumerLive[consumerIndex] = YES;
     size_t lengthLeft = length;

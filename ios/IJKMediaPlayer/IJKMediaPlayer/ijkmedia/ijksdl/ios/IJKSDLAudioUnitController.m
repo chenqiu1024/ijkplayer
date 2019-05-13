@@ -347,6 +347,10 @@
         }
         free(_audioBufferList);
     }
+    for (C2Buffer* c2buffer in _c2Buffers)
+    {
+        [c2buffer finish];
+    }
 }
 
 - (void)setPlaybackRate:(float)playbackRate
@@ -416,7 +420,8 @@ static OSStatus RenderCallback(void                        *inRefCon,
 
         for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
             AudioBuffer *ioBuffer = &ioData->mBuffers[i];
-            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
+            [auController.c2Buffers[i] readBytesForConsumer:0 into:ioBuffer->mData length:ioBuffer->mDataByteSize isFinal:NO];
+//            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
         }
         //#AudioCallback#
         return noErr;
@@ -435,24 +440,26 @@ static OSStatus OutputRenderCallback(void                        *inRefCon,
         if (ioData)
         {
             NSLog(@"#AudioUnitCallback# OutputRenderCallback : numBuffers=%d", ioData->mNumberBuffers);
+            IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
             for (int i=0; i<ioData->mNumberBuffers; ++i)
             {
                 AudioBuffer audioBuffer = ioData->mBuffers[i];
                 NSLog(@"#AudioUnitCallback# OutputRenderCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
                 if (audioBuffer.mData)/// && (*ioActionFlags & kAudioUnitRenderAction_PostRender))
                 {//PeriodInSamples = SampleRate / Frequency = 1024 / k, k = 1024 * Frequency / SampleRate
-                    const float F0 = 430.7, F1 = 861.4, A0 = 0.05, A1 = 0.05;
-                    static NSUInteger totalSamples = 0;
-                    ushort* pDst = (ushort*)audioBuffer.mData;
-                    //for (int iSample=0; iSample<inNumberFrames; ++iSample)
-                    for (int iSample=0; iSample<audioBuffer.mDataByteSize/4; ++iSample)
-                    {
-                        totalSamples++;
-                        float a0 = sinf(2 * M_PI * F0 * totalSamples / 44100.f) * A0;
-                        *(pDst++) = 32768 * a0 + 32767;
-                        float a1 = sinf(2 * M_PI * F1 * totalSamples / 44100.f) * A1;
-                        *(pDst++) = 32768 * a1 + 32767;
-                    }
+//                    const float F0 = 430.7, F1 = 861.4, A0 = 0.05, A1 = 0.05;
+//                    static NSUInteger totalSamples = 0;
+//                    ushort* pDst = (ushort*)audioBuffer.mData;
+//                    for (int iSample=0; iSample<audioBuffer.mDataByteSize/4; ++iSample)
+//                    {
+//                        totalSamples++;
+//                        float a0 = sinf(2 * M_PI * F0 * totalSamples / 44100.f) * A0;
+//                        *(pDst++) = 32768 * a0 + 32767;
+//                        float a1 = sinf(2 * M_PI * F1 * totalSamples / 44100.f) * A1;
+//                        *(pDst++) = 32768 * a1 + 32767;
+//                    }
+                    
+                    [auController.c2Buffers[i] readBytesForConsumer:1 into:audioBuffer.mData length:audioBuffer.mDataByteSize isFinal:NO];
                 }
             }
         }

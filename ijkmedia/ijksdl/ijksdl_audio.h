@@ -74,10 +74,7 @@ typedef uint16_t SDL_AudioFormat;
 
 #define SDL_MIX_MAXVOLUME (128)
 
-typedef void (*SDL_AudioCallback) (void *userdata, Uint8 * stream,
-                                   int len);
-
-typedef struct SDL_AudioSpec
+typedef struct SDL_AudioSpecParamsStruct
 {
     int freq;                   /**< DSP frequency -- samples per second */
     SDL_AudioFormat format;     /**< Audio data format */
@@ -86,7 +83,28 @@ typedef struct SDL_AudioSpec
     Uint16 samples;             /**< Audio buffer size in samples (power of 2) */
     Uint16 padding;             /**< NOT USED. Necessary for some compile environments */
     Uint32 size;                /**< Audio buffer size in bytes (calculated) */
+} SDL_AudioSpecParams;
+
+typedef void (*SDL_AudioCallback) (void* userdata, Uint8 * stream, int len, SDL_AudioSpecParams audioParams);
+
+typedef struct SDL_AudioSpec
+{
+    union
+    {
+        SDL_AudioSpecParams audioParams;
+        struct
+        {
+            int freq;                   /**< DSP frequency -- samples per second */
+            SDL_AudioFormat format;     /**< Audio data format */
+            Uint8 channels;             /**< Number of channels: 1 mono, 2 stereo */
+            Uint8 silence;              /**< Audio buffer silence value (calculated) */
+            Uint16 samples;             /**< Audio buffer size in samples (power of 2) */
+            Uint16 padding;             /**< NOT USED. Necessary for some compile environments */
+            Uint32 size;                /**< Audio buffer size in bytes (calculated) */
+        };///#AudioCallback#
+    };
     SDL_AudioCallback callback;
+    SDL_AudioCallback audioMixedCallback;
     void *userdata;
 } SDL_AudioSpec;
 

@@ -70,5 +70,7 @@ IJKFF_Pipenode* ffpipeline_open_video_decoder(IJKFF_Pipeline *pipeline, FFPlayer
 
 SDL_Aout *ffpipeline_open_audio_output(IJKFF_Pipeline *pipeline, FFPlayer *ffp)
 {
-    return pipeline->func_open_audio_output(pipeline, ffp);
+    if (NULL != pipeline->func_open_audio_output)
+        return pipeline->func_open_audio_output(pipeline, ffp);
+    return NULL;
 }

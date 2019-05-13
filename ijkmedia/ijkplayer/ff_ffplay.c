@@ -990,8 +990,10 @@ static void stream_close(FFPlayer *ffp)
     avformat_close_input(&is->ic);
 
     av_log(NULL, AV_LOG_DEBUG, "wait for video_refresh_tid\n");
+    printf("\n#Crash# Before SDL_WaitThread(is->video_refresh_tid, NULL); tid=0x%lx\n", (long)(void*)is->video_refresh_tid->id);
     SDL_WaitThread(is->video_refresh_tid, NULL);
-
+    printf("\n#Crash# After SDL_WaitThread(is->video_refresh_tid, NULL); tid=0x%lx\n", (long)(void*)is->video_refresh_tid->id);
+    
     packet_queue_destroy(&is->videoq);
     packet_queue_destroy(&is->audioq);
     packet_queue_destroy(&is->subtitleq);
@@ -1291,6 +1293,7 @@ static void video_refresh(FFPlayer *opaque, double *remaining_time)
         *remaining_time = FFMIN(*remaining_time, is->last_vis_time + ffp->rdftspeed - time);
     }
 
+    bool shouldReserverForceRefresh = false;
     if (is->video_st) {
 retry:
         if (frame_queue_nb_remaining(&is->pictq) == 0) {
@@ -1381,9 +1384,19 @@ retry:
 display:
         /* display picture */
         if (!ffp->display_disable && is->force_refresh && is->show_mode == SHOW_MODE_VIDEO && is->pictq.rindex_shown)
+        {
+            is->force_refresh = 0;
             video_display2(ffp);
+            if (is->force_refresh)
+            {
+                shouldReserverForceRefresh = true;
+            }
+        }
     }
-    is->force_refresh = 0;
+    if (!shouldReserverForceRefresh)
+    {
+        is->force_refresh = 0;
+    }
     if (ffp->show_status) {
         static int64_t last_time;
         int64_t cur_time;
@@ -2553,6 +2566,7 @@ reload:
         is->audio_clock = af->pts + (double) af->frame->nb_samples / af->frame->sample_rate;
     else
         is->audio_clock = NAN;
+    is->audio_dts = (double)af->frame->pkt_dts / af->frame->sample_rate;
     is->audio_clock_serial = af->serial;
 #ifdef FFP_SHOW_AUDIO_DELAY
     {
@@ -2577,17 +2591,21 @@ reload:
 }
 
 /* prepare a new audio buffer */
-static void sdl_audio_callback(void *opaque, Uint8 *stream, int len)
+static void sdl_audio_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams)
 {
-    FFPlayer *ffp = opaque;
+    Uint8* origStream = stream;
+    int origLen = len;
+
+    FFPlayer *ffp = opaque;///#AudioCallback#
     VideoState *is = ffp->is;
     int audio_size, len1;
     if (!ffp || !is) {
         memset(stream, 0, len);
-        return;
+        goto finally;
     }
 
     ffp->audio_callback_time = av_gettime_relative();
+//    printf("#AudioFrame# audio_callback_time = %lld, at %d in %s\n", ffp->audio_callback_time, __LINE__, __PRETTY_FUNCTION__);
 
     if (ffp->pf_playback_rate_changed) {
         ffp->pf_playback_rate_changed = 0;
@@ -2646,8 +2664,23 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len)
         set_clock_at(&is->audclk, is->audio_clock - (double)(is->audio_write_buf_size) / is->audio_tgt.bytes_per_sec - SDL_AoutGetLatencySeconds(ffp->aout), is->audio_clock_serial, ffp->audio_callback_time / 1000000.0);
         sync_clock_to_slave(&is->extclk, &is->audclk);
     }
+    
+finally:
+    if (ffp && ffp->audioDecodeCallback.callbackFunction)
+    {//#AudioCallback#
+        ffp->audioDecodeCallback.callbackFunction(ffp->audioDecodeCallback.contextData, origStream, origLen, audioParams);
+    }
+    return;
 }
 
+static void sdl_audio_mixed_callback(void *opaque, Uint8 *stream, int len, SDL_AudioSpecParams audioParams) {
+    FFPlayer *ffp = opaque;///#AudioCallback#
+    if (ffp && ffp->audioMixedCallback.callbackFunction)
+    {//#AudioCallback#
+        ffp->audioMixedCallback.callbackFunction(ffp->audioMixedCallback.contextData, stream, len, audioParams);
+    }
+}
+    
 static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wanted_nb_channels, int wanted_sample_rate, struct AudioParams *audio_hw_params)
 {
     FFPlayer *ffp = opaque;
@@ -2683,7 +2716,8 @@ static int audio_open(FFPlayer *opaque, int64_t wanted_channel_layout, int wante
     wanted_spec.silence = 0;
     wanted_spec.samples = FFMAX(SDL_AUDIO_MIN_BUFFER_SIZE, 2 << av_log2(wanted_spec.freq / SDL_AoutGetAudioPerSecondCallBacks(ffp->aout)));
     wanted_spec.callback = sdl_audio_callback;
-    wanted_spec.userdata = opaque;
+    wanted_spec.audioMixedCallback = sdl_audio_mixed_callback;
+    wanted_spec.userdata = opaque;///#AudioCallback#Resample#
     while (SDL_AoutOpenAudio(ffp->aout, &wanted_spec, &spec) < 0) {
         /* avoid infinity loop on exit. --by bbcallen */
         if (is->abort_request)
@@ -2837,7 +2871,7 @@ static int stream_component_open(FFPlayer *ffp, int stream_index)
             channel_layout = av_buffersink_get_channel_layout(sink);
         }
 #else
-        sample_rate    = avctx->sample_rate;
+            sample_rate    = avctx->sample_rate;///!!! 16000;///!!!#AudioCallback#Resample# 
         nb_channels    = avctx->channels;
         channel_layout = avctx->channel_layout;
 #endif
@@ -3593,6 +3627,7 @@ static VideoState *stream_open(FFPlayer *ffp, const char *filename, AVInputForma
     is->pause_req = !ffp->start_on_prepared;
 
     is->video_refresh_tid = SDL_CreateThreadEx(&is->_video_refresh_tid, video_refresh_thread, ffp, "ff_vout");
+    printf("\n#Crash# is->video_refresh_tid = SDL_CreateThreadEx...; tid=0x%lx\n", (long)is->video_refresh_tid->id);
     if (!is->video_refresh_tid) {
         av_freep(&ffp->is);
         return NULL;
@@ -3635,15 +3670,20 @@ static int video_refresh_thread(void *arg)
 {
     FFPlayer *ffp = arg;
     VideoState *is = ffp->is;
+    printf("\n#Crash# Begin of video_refresh_thread\n");
     double remaining_time = 0.0;
     while (!is->abort_request) {
         if (remaining_time > 0.0)
             av_usleep((int)(int64_t)(remaining_time * 1000000.0));
         remaining_time = REFRESH_RATE;
         if (is->show_mode != SHOW_MODE_NONE && (!is->paused || is->force_refresh))
+        {
+//            printf("\n#Crash# BEGIN of video_refresh\n");
             video_refresh(ffp, &remaining_time);
+//            printf("\n#Crash# END of video_refresh\n");
+        }
     }
-
+//    printf("\n#Crash# End of video_refresh_thread\n");
     return 0;
 }
 
@@ -3895,7 +3935,15 @@ void ffp_destroy(FFPlayer *ffp)
 
     msg_queue_destroy(&ffp->msg_queue);
 
-
+    if (ffp->audioDecodeCallback.contextDataReleaseFunction)
+    {
+        ffp->audioDecodeCallback.contextDataReleaseFunction(ffp->audioDecodeCallback.contextData);
+    }
+    if (ffp->audioMixedCallback.contextDataReleaseFunction)
+    {
+        ffp->audioMixedCallback.contextDataReleaseFunction(ffp->audioMixedCallback.contextData);
+    }
+    
     av_free(ffp);
 }
 

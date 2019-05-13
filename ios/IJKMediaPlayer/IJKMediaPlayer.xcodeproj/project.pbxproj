@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		4DA7F6891F2B1E270032A499 /* ijkiourlhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */; };
 		4DA7F68A1F2B1E270032A499 /* ijkiourlhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */; };
+		527E316622895CCC00106DE4 /* C2Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 527E316422895CCB00106DE4 /* C2Buffer.h */; };
+		527E316722895CCC00106DE4 /* C2Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 527E316422895CCB00106DE4 /* C2Buffer.h */; };
+		527E316822895CCC00106DE4 /* C2Buffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 527E316522895CCC00106DE4 /* C2Buffer.m */; };
+		527E316922895CCC00106DE4 /* C2Buffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 527E316522895CCC00106DE4 /* C2Buffer.m */; };
+		52FAF1D320678EEF00713E1C /* IJKAudioKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E6EE92A1187810C5009EAB56 /* IJKAudioKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		52FAF1D420678EF500713E1C /* IJKFFMoviePlayerDef.h in Headers */ = {isa = PBXBuildFile; fileRef = E6F727B917F2D9D30043623F /* IJKFFMoviePlayerDef.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		52FAF1D520678F4C00713E1C /* IJKAudioKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E6EE92A1187810C5009EAB56 /* IJKAudioKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		52FAF1D620678F5100713E1C /* IJKFFMoviePlayerDef.h in Headers */ = {isa = PBXBuildFile; fileRef = E6F727B917F2D9D30043623F /* IJKFFMoviePlayerDef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5407EC291DF7F93B00457BFE /* IJKVideoToolBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 5407EC271DF7F93B00457BFE /* IJKVideoToolBox.h */; };
 		5407EC2A1DF7F93B00457BFE /* IJKVideoToolBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 5407EC281DF7F93B00457BFE /* IJKVideoToolBox.m */; };
 		5407EC2D1DF81D2600457BFE /* IJKVideoToolBoxSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 5407EC2B1DF81D2600457BFE /* IJKVideoToolBoxSync.h */; };
@@ -164,6 +172,10 @@
 		54CF8A521E15287D00309DD5 /* ijktree.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CF8A461E15287D00309DD5 /* ijktree.h */; };
 		54CF8A531E15287D00309DD5 /* ijkutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 54CF8A471E15287D00309DD5 /* ijkutils.c */; };
 		54CF8A541E15287D00309DD5 /* ijkutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CF8A481E15287D00309DD5 /* ijkutils.h */; };
+		BBB7962420B2F56E0059C1DA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB7962320B2F56E0059C1DA /* libbz2.tbd */; };
+		BBB7962620B2F5730059C1DA /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB7962520B2F5730059C1DA /* libiconv.tbd */; };
+		BBB7962720B2F5780059C1DA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB7962320B2F56E0059C1DA /* libbz2.tbd */; };
+		BBB7962820B2F57D0059C1DA /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB7962520B2F5730059C1DA /* libiconv.tbd */; };
 		E607FFE11B7B62E3005F11A6 /* IJKDeviceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E607FFDF1B7B60F9005F11A6 /* IJKDeviceModel.m */; };
 		E653C6F61BCE5A750016835A /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E653C6EF1BCE5A750016835A /* libavcodec.a */; };
 		E653C6F81BCE5A750016835A /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E653C6F01BCE5A750016835A /* libavfilter.a */; };
@@ -278,6 +290,8 @@
 		45DB4AA71A5D52AE005CAD41 /* ijksdl_vout_overlay_videotoolbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijksdl_vout_overlay_videotoolbox.h; sourceTree = "<group>"; };
 		45DB4AA81A5D52AE005CAD41 /* ijksdl_vout_overlay_videotoolbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ijksdl_vout_overlay_videotoolbox.m; sourceTree = "<group>"; };
 		4DA7F6881F2B1E270032A499 /* ijkiourlhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ijkiourlhook.c; sourceTree = "<group>"; };
+		527E316422895CCB00106DE4 /* C2Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = C2Buffer.h; sourceTree = "<group>"; };
+		527E316522895CCC00106DE4 /* C2Buffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = C2Buffer.m; sourceTree = "<group>"; };
 		5407EC271DF7F93B00457BFE /* IJKVideoToolBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IJKVideoToolBox.h; path = ijkmedia/ijkplayer/ios/pipeline/IJKVideoToolBox.h; sourceTree = "<group>"; };
 		5407EC281DF7F93B00457BFE /* IJKVideoToolBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IJKVideoToolBox.m; path = ijkmedia/ijkplayer/ios/pipeline/IJKVideoToolBox.m; sourceTree = "<group>"; };
 		5407EC2B1DF81D2600457BFE /* IJKVideoToolBoxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IJKVideoToolBoxSync.h; path = ijkmedia/ijkplayer/ios/pipeline/IJKVideoToolBoxSync.h; sourceTree = "<group>"; };
@@ -315,6 +329,8 @@
 		54CF8A461E15287D00309DD5 /* ijktree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijktree.h; sourceTree = "<group>"; };
 		54CF8A471E15287D00309DD5 /* ijkutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ijkutils.c; sourceTree = "<group>"; };
 		54CF8A481E15287D00309DD5 /* ijkutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijkutils.h; sourceTree = "<group>"; };
+		BBB7962320B2F56E0059C1DA /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		BBB7962520B2F5730059C1DA /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		E607FFDE1B7B60F9005F11A6 /* IJKDeviceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IJKDeviceModel.h; path = IJKMediaPlayer/IJKDeviceModel.h; sourceTree = "<group>"; };
 		E607FFDF1B7B60F9005F11A6 /* IJKDeviceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IJKDeviceModel.m; path = IJKMediaPlayer/IJKDeviceModel.m; sourceTree = "<group>"; };
 		E62139BC180FA89A00553533 /* IJKFFOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IJKFFOptions.h; sourceTree = "<group>"; };
@@ -468,6 +484,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBB7962620B2F5730059C1DA /* libiconv.tbd in Frameworks */,
+				BBB7962420B2F56E0059C1DA /* libbz2.tbd in Frameworks */,
 				5450B0471E63EABC00568494 /* libz.tbd in Frameworks */,
 				5450B0451E63EAB700568494 /* libcrypto.a in Frameworks */,
 				5450B0461E63EAB700568494 /* libssl.a in Frameworks */,
@@ -484,6 +502,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBB7962820B2F57D0059C1DA /* libiconv.tbd in Frameworks */,
+				BBB7962720B2F5780059C1DA /* libbz2.tbd in Frameworks */,
 				E653C6F61BCE5A750016835A /* libavcodec.a in Frameworks */,
 				E653C6F81BCE5A750016835A /* libavfilter.a in Frameworks */,
 				E653C6FA1BCE5A750016835A /* libavformat.a in Frameworks */,
@@ -653,6 +673,8 @@
 		E6903EBB17EAF6C500CFD954 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BBB7962520B2F5730059C1DA /* libiconv.tbd */,
+				BBB7962320B2F56E0059C1DA /* libbz2.tbd */,
 				5450AF8F1E63E59800568494 /* libz.tbd */,
 				5450AF8B1E63E59300568494 /* libcrypto.a */,
 				5450AF8C1E63E59300568494 /* libssl.a */,
@@ -754,6 +776,8 @@
 		E6903FDF17EAFC6100CFD954 /* ijksdl */ = {
 			isa = PBXGroup;
 			children = (
+				527E316422895CCB00106DE4 /* C2Buffer.h */,
+				527E316522895CCC00106DE4 /* C2Buffer.m */,
 				E63FC27217F013DE003551EB /* dummy */,
 				E6903FEF17EAFC6100CFD954 /* ffmpeg */,
 				E6C459851C7030B6004831EC /* gles2 */,
@@ -954,6 +978,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52FAF1D620678F5100713E1C /* IJKFFMoviePlayerDef.h in Headers */,
+				52FAF1D520678F4C00713E1C /* IJKAudioKit.h in Headers */,
 				5450B01F1E63EA4300568494 /* IJKFFMonitor.h in Headers */,
 				5450B0201E63EA4300568494 /* ijkiourl.h in Headers */,
 				5450B0211E63EA4300568494 /* IJKFFMoviePlayerController.h in Headers */,
@@ -986,6 +1012,7 @@
 				5450B03C1E63EA4300568494 /* IJKSDLHudViewCell.h in Headers */,
 				5450B03D1E63EA4300568494 /* IJKVideoToolBox.h in Headers */,
 				5450B03E1E63EA4300568494 /* NSString+IJKMedia.h in Headers */,
+				527E316722895CCC00106DE4 /* C2Buffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -993,6 +1020,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52FAF1D420678EF500713E1C /* IJKFFMoviePlayerDef.h in Headers */,
+				52FAF1D320678EEF00713E1C /* IJKAudioKit.h in Headers */,
 				E6DBD3891C8941EB0058E4FB /* IJKFFMonitor.h in Headers */,
 				54CF8A3C1E1526F800309DD5 /* ijkiourl.h in Headers */,
 				E654EAEA1B6B295200B0F2D0 /* IJKFFMoviePlayerController.h in Headers */,
@@ -1025,6 +1054,7 @@
 				E68B7ACF1C1E97B0001DE241 /* IJKSDLHudViewCell.h in Headers */,
 				5407EC291DF7F93B00457BFE /* IJKVideoToolBox.h in Headers */,
 				E698089B1C7EB13A0048A46C /* NSString+IJKMedia.h in Headers */,
+				527E316622895CCC00106DE4 /* C2Buffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1109,6 +1139,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = E6903EB017EAF6C500CFD954;
@@ -1202,6 +1233,7 @@
 				5450AFD41E63EA4300568494 /* IJKDeviceModel.m in Sources */,
 				5450AFD51E63EA4300568494 /* ijkiocache.c in Sources */,
 				5450AFD61E63EA4300568494 /* ijksdl_egl.c in Sources */,
+				527E316922895CCC00106DE4 /* C2Buffer.m in Sources */,
 				5450AFD71E63EA4300568494 /* ijkio.c in Sources */,
 				5450AFD81E63EA4300568494 /* IJKAudioKit.m in Sources */,
 				5450AFD91E63EA4300568494 /* IJKMPMoviePlayerController.m in Sources */,
@@ -1293,6 +1325,7 @@
 				E607FFE11B7B62E3005F11A6 /* IJKDeviceModel.m in Sources */,
 				54CF8A361E1526F800309DD5 /* ijkiocache.c in Sources */,
 				E6C459BA1C706A13004831EC /* ijksdl_egl.c in Sources */,
+				527E316822895CCC00106DE4 /* C2Buffer.m in Sources */,
 				54CF8A331E1526F800309DD5 /* ijkio.c in Sources */,
 				E654EAA31B6B283700B0F2D0 /* IJKAudioKit.m in Sources */,
 				E654EAAA1B6B284300B0F2D0 /* IJKMPMoviePlayerController.m in Sources */,
@@ -1430,6 +1463,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1473,6 +1507,7 @@
 				);
 				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-read_only_relocs",
 					suppress,
@@ -1481,6 +1516,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1515,11 +1551,11 @@
 					"$(inherited)",
 					../build/universal/include,
 					IJKMediaPlayer/ijkmedia,
-					../../ijkmedia,
+					"../../ijkmedia/**",
 				);
 				INFOPLIST_FILE = IJKMediaFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1531,6 +1567,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1561,11 +1598,11 @@
 					"$(inherited)",
 					../build/universal/include,
 					IJKMediaPlayer/ijkmedia,
-					../../ijkmedia,
+					"../../ijkmedia/**",
 				);
 				INFOPLIST_FILE = IJKMediaFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1573,10 +1610,12 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "tv.danmaku.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

@@ -33,8 +33,14 @@
 
 #define SDL_IOS_AUDIO_MAX_CALLBACKS_PER_SEC 15
 
+#define USE_AUDIOUNIT_PLAYBACK
+
 struct SDL_Aout_Opaque {
+#ifndef USE_AUDIOUNIT_PLAYBACK
     IJKSDLAudioQueueController *aoutController;
+#else
+    IJKSDLAudioUnitController* aoutController;
+#endif
 };
 
 static int aout_open_audio(SDL_Aout *aout, const SDL_AudioSpec *desired, SDL_AudioSpec *obtained)
@@ -42,8 +48,11 @@ static int aout_open_audio(SDL_Aout *aout, const SDL_AudioSpec *desired, SDL_Aud
     assert(desired);
     SDLTRACE("aout_open_audio()\n");
     SDL_Aout_Opaque *opaque = aout->opaque;
-
+#ifndef USE_AUDIOUNIT_PLAYBACK
     opaque->aoutController = [[IJKSDLAudioQueueController alloc] initWithAudioSpec:desired];
+#else
+    opaque->aoutController = [[IJKSDLAudioUnitController alloc] initWithAudioSpec:desired];
+#endif
     if (!opaque->aoutController) {
         ALOGE("aout_open_audio_n: failed to new AudioTrcak()\n");
         return -1;

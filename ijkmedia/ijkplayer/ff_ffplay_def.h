@@ -308,6 +308,7 @@ typedef struct VideoState {
     int av_sync_type;
     void *handle;
     double audio_clock;
+    double audio_dts;
     int audio_clock_serial;
     double audio_diff_cum; /* used for AV difference average computation */
     double audio_diff_avg_coef;
@@ -544,6 +545,12 @@ inline static void ffp_reset_demux_cache_control(FFDemuxCacheControl *dcc)
     dcc->current_high_water_mark_in_ms  = DEFAULT_FIRST_HIGH_WATER_MARK_IN_MS;
 }
 
+typedef struct {
+    SDL_AudioCallback callbackFunction;
+    void* contextData;
+    void(*contextDataReleaseFunction)(void*);
+} AudioDataCallbackStruct;
+
 /* ffplayer */
 struct IjkMediaMeta;
 struct IJKFF_Pipeline;
@@ -710,6 +717,10 @@ typedef struct FFPlayer {
     int skip_calc_frame_rate;
     int get_frame_mode;
     GetImgInfo *get_img_info;
+    
+    AudioDataCallbackStruct audioDecodeCallback;
+    AudioDataCallbackStruct audioMixedCallback;
+    
 } FFPlayer;
 
 #define fftime_to_milliseconds(ts) (av_rescale(ts, 1000, AV_TIME_BASE))
@@ -820,6 +831,11 @@ inline static void ffp_reset_internal(FFPlayer *ffp)
     SDL_SpeedSamplerReset(&ffp->vfps_sampler);
     SDL_SpeedSamplerReset(&ffp->vdps_sampler);
 
+    ffp->audioDecodeCallback.callbackFunction = NULL;
+    ffp->audioDecodeCallback.contextDataReleaseFunction = NULL;
+    ffp->audioMixedCallback.callbackFunction = NULL;
+    ffp->audioMixedCallback.contextDataReleaseFunction = NULL;
+    
     /* filters */
     ffp->vf_changed                     = 0;
     ffp->af_changed                     = 0;

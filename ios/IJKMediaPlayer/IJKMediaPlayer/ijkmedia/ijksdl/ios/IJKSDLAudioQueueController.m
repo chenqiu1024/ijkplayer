@@ -64,7 +64,7 @@
         /* Get the current format */
         AudioStreamBasicDescription streamDescription;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &streamDescription);
-
+        //#AudioCallback#Resample#
         SDL_CalculateAudioSpec(&_spec);
 
         if (_spec.size == 0) {
@@ -136,7 +136,7 @@
     if (!_audioQueueRef)
         return;
 
-    self.spec.callback(self.spec.userdata, NULL, 0);
+    self.spec.callback(self.spec.userdata, NULL, 0, self.spec.audioParams);
 
     @synchronized(_lock) {
         _isPaused = NO;
@@ -240,7 +240,7 @@ static void IJKSDLAudioQueueOuptutCallback(void * inUserData, AudioQueueRef inAQ
         } else if (aqController->_isPaused || aqController->_isStopped) {
             memset(inBuffer->mAudioData, aqController.spec.silence, inBuffer->mAudioDataByteSize);
         } else {
-            (*aqController.spec.callback)(aqController.spec.userdata, inBuffer->mAudioData, inBuffer->mAudioDataByteSize);
+            (*aqController.spec.callback)(aqController.spec.userdata, inBuffer->mAudioData, inBuffer->mAudioDataByteSize, aqController.spec.audioParams);
         }
 
         AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);

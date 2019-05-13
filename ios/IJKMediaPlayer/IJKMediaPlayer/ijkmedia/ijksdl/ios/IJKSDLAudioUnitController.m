@@ -81,7 +81,7 @@
             _audioBufferList->mBuffers[i].mDataByteSize = 4096;
             _audioBufferList->mBuffers[i].mData = malloc(4096);
             
-            C2Buffer* c2Buffer = [[C2Buffer alloc] initWithSize:4096 delegate:self];
+            C2Buffer* c2Buffer = [[C2Buffer alloc] initWithSize:65536 delegate:self];
             [c2Buffers addObject:c2Buffer];
         }
         _c2Buffers = [NSArray arrayWithArray:c2Buffers];
@@ -303,6 +303,10 @@
         return;
 
 ///!!!    AudioUnitReset(_auUnit, kAudioUnitScope_Global, 0);
+    for (C2Buffer* c2buffer in _c2Buffers)
+    {
+        [c2buffer finish];
+    }
 }
 
 - (void)stop
@@ -310,11 +314,17 @@
     if (!_auGraph)
         return;
 
+    for (C2Buffer* c2buffer in _c2Buffers)
+    {
+        [c2buffer finish];
+    }
+    
     OSStatus status = AUGraphStop(_auGraph);
     if (status != noErr)
         ALOGE("AudioUnit: failed to stop AudioUnit (%d)", (int)status);
     status = AUGraphStop(_auGraph1);
     NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+    
 }
 
 - (void)close

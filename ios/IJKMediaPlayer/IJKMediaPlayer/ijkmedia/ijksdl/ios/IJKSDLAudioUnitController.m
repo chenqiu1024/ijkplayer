@@ -409,11 +409,11 @@ static OSStatus RenderCallback(void                        *inRefCon,
         NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
         if (ioData)
         {
-            NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : numBuffers=%d", ioData->mNumberBuffers);
+//            NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : numBuffers=%d", ioData->mNumberBuffers);
             for (int i=0; i<ioData->mNumberBuffers; ++i)
             {
                 AudioBuffer audioBuffer = ioData->mBuffers[i];
-                NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
+//                NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
             }
         }
         
@@ -430,7 +430,7 @@ static OSStatus RenderCallback(void                        *inRefCon,
 
         for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
             AudioBuffer *ioBuffer = &ioData->mBuffers[i];
-            [auController.c2Buffers[i] readBytesForConsumer:0 into:ioBuffer->mData length:ioBuffer->mDataByteSize isFinal:NO];
+//            [auController.c2Buffers[i] readBytesForConsumer:0 into:ioBuffer->mData length:ioBuffer->mDataByteSize isFinal:NO];
 //            (*auController.spec.callback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
         }
         //#AudioCallback#
@@ -449,12 +449,12 @@ static OSStatus OutputRenderCallback(void                        *inRefCon,
         NSLog(@"#AudioUnitCallback# OutputRenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
         if (ioData)
         {
-            NSLog(@"#AudioUnitCallback# OutputRenderCallback : numBuffers=%d", ioData->mNumberBuffers);
+//            NSLog(@"#AudioUnitCallback# OutputRenderCallback : numBuffers=%d", ioData->mNumberBuffers);
             IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
             for (int i=0; i<ioData->mNumberBuffers; ++i)
             {
                 AudioBuffer audioBuffer = ioData->mBuffers[i];
-                NSLog(@"#AudioUnitCallback# OutputRenderCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
+//                NSLog(@"#AudioUnitCallback# OutputRenderCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
                 if (audioBuffer.mData)/// && (*ioActionFlags & kAudioUnitRenderAction_PostRender))
                 {//PeriodInSamples = SampleRate / Frequency = 1024 / k, k = 1024 * Frequency / SampleRate
 //                    const float F0 = 430.7, F1 = 861.4, A0 = 0.05, A1 = 0.05;
@@ -486,14 +486,14 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
 {
     @autoreleasepool {
         IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
-        NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
+//        NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
         if (ioData)
         {
-            NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : numBuffers=%d", ioData->mNumberBuffers);
+//            NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : numBuffers=%d", ioData->mNumberBuffers);
             for (int i=0; i<ioData->mNumberBuffers; ++i)
             {
                 AudioBuffer audioBuffer = ioData->mBuffers[i];
-                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
+//                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
                 if (audioBuffer.mData && (*ioActionFlags & kAudioUnitRenderAction_PostRender))
                 {//PeriodInSamples = SampleRate / Frequency = 1024 / k, k = 1024 * Frequency / SampleRate
 //                    const float F0 = 430.7, F1 = 861.4, A0 = 0.05, A1 = 0.05;
@@ -527,17 +527,17 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
             NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:beginTime];
             if (timeElapsed > 0)
             {
-                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback AudioBuffer[%d] .channels=%d, .dataSize=%d; totalDataSize=%ld", i, ioBuffer->mNumberChannels, ioBuffer->mDataByteSize, totalDataSize);
+//                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback AudioBuffer[%d] .channels=%d, .dataSize=%d; totalDataSize=%ld", i, ioBuffer->mNumberChannels, ioBuffer->mDataByteSize, totalDataSize);
             }
             else
             {
-                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback AudioBuffer[%d] .channels=%d, .dataSize=%d; ", i, ioBuffer->mNumberChannels, ioBuffer->mDataByteSize);
+//                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback AudioBuffer[%d] .channels=%d, .dataSize=%d; ", i, ioBuffer->mNumberChannels, ioBuffer->mDataByteSize);
             }
             
             if (ioBuffer->mData)
             {
                 totalDataSize += ioBuffer->mDataByteSize;
-                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback TimeStamp = %f", (float)totalDataSize / ioData->mBuffers[0].mNumberChannels / 2 / auController.spec.freq);
+//                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback TimeStamp = %f", (float)totalDataSize / ioData->mBuffers[0].mNumberChannels / 2 / auController.spec.freq);
                 (*auController.spec.audioMixedCallback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
             }
         }
@@ -555,14 +555,14 @@ static OSStatus MicInputCallback(void                        *inRefCon,
 {
     @autoreleasepool {
         IJKSDLAudioUnitController* auController = (__bridge IJKSDLAudioUnitController *) inRefCon;
-        NSLog(@"#RecordCallback#AudioUnitCallback# MicInputCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
+//        NSLog(@"#RecordCallback#AudioUnitCallback# MicInputCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
         if (ioData)
         {
-            NSLog(@"#RecordCallback#AudioUnitCallback# MicInputCallback : numBuffers=%d", ioData->mNumberBuffers);
+//            NSLog(@"#RecordCallback#AudioUnitCallback# MicInputCallback : numBuffers=%d", ioData->mNumberBuffers);
             for (int i=0; i<ioData->mNumberBuffers; ++i)
             {
                 AudioBuffer audioBuffer = ioData->mBuffers[i];
-                NSLog(@"#RecordCallback#AudioUnitCallback# MicInputCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
+//                NSLog(@"#RecordCallback#AudioUnitCallback# MicInputCallback : audioBuffer[%d].channels=%d, .size=%d, .data=0x%lx", i, audioBuffer.mNumberChannels, audioBuffer.mDataByteSize, (long)audioBuffer.mData);
             }
         }
         
@@ -572,7 +572,7 @@ static OSStatus MicInputCallback(void                        *inRefCon,
         OSStatus status;
         AudioUnitRenderActionFlags actionFlag = kAudioUnitRenderAction_PostRender;
         status = AudioUnitRender(auController.mixerUnit, &actionFlag, inTimeStamp, inBusNumber, inNumberFrames, auController.audioBufferList);
-        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, auController.audioBufferList=0x%lx, at %d in %s", status, (long)auController.audioBufferList, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, auController.audioBufferList=0x%lx, at %d in %s", status, (long)auController.audioBufferList, __LINE__, __PRETTY_FUNCTION__);
         return noErr;
     }
 }

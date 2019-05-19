@@ -53,7 +53,7 @@
 }
 
 - (id)initWithAudioSpec:(const SDL_AudioSpec *)aSpec
-{
+{NSLog(@"#AudioDeadlock# init . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     self = [super init];
     if (self) {
         if (aSpec == NULL) {
@@ -263,12 +263,12 @@
 }
 
 - (void)dealloc
-{
+{NSLog(@"#AudioDeadlock# dealloc . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     [self close];
 }
 
 - (void)play
-{
+{NSLog(@"#AudioDeadlock# play . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     if (!_auGraph)
         return;
 
@@ -285,7 +285,7 @@
 }
 
 - (void)pause
-{
+{NSLog(@"#AudioDeadlock# pause . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     if (!_auGraph)
         return;
 
@@ -298,26 +298,26 @@
 }
 
 - (void)flush
-{
+{NSLog(@"#AudioDeadlock# flush . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     if (!_auGraph)
         return;
 
 ///!!!    AudioUnitReset(_auUnit, kAudioUnitScope_Global, 0);
-    for (C2Buffer* c2buffer in _c2Buffers)
-    {
-        [c2buffer finish];
-    }
+//    for (C2Buffer* c2buffer in _c2Buffers)
+//    {
+//        [c2buffer finish];
+//    }
 }
 
 - (void)stop
-{
+{NSLog(@"#AudioDeadlock# stop . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     if (!_auGraph)
         return;
 
-    for (C2Buffer* c2buffer in _c2Buffers)
-    {
-        [c2buffer finish];
-    }
+//    for (C2Buffer* c2buffer in _c2Buffers)
+//    {
+//        [c2buffer finish];
+//    }
     
     OSStatus status = AUGraphStop(_auGraph);
     if (status != noErr)
@@ -328,7 +328,7 @@
 }
 
 - (void)close
-{
+{NSLog(@"#AudioDeadlock# close . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     [self stop];
 
     if (!_auGraph)

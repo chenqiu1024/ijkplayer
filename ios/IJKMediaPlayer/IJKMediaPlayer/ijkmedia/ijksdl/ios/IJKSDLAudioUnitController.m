@@ -82,6 +82,7 @@
             _audioBufferList->mBuffers[i].mData = malloc(4096);
             
             C2Buffer* c2Buffer = [[C2Buffer alloc] initWithSize:65536 delegate:self];
+            [c2Buffer notifyConsumerWillDeactive:0];///!!!For Debug
             [c2Buffers addObject:c2Buffer];
         }
         _c2Buffers = [NSArray arrayWithArray:c2Buffers];

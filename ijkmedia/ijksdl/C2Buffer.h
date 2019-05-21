@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(instancetype) initWithSize:(int32_t)size delegate:(_Nonnull id<C2BufferDelegate>)delegate;
 
-//-(void) notifyConsumerWillDeactive:(int)consumerIndex;
+-(void) notifyConsumerWillDeactive:(int)consumerIndex;
 
 -(int32_t) readBytesForConsumer:(int)consumerIndex into:(void*)destBuffer length:(int32_t)length isFinal:(BOOL)isFinal completion:(void(^)(int32_t))completion;
 

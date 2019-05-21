@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol C2BufferDelegate <NSObject>
 
 @required
--(size_t) c2BufferFillDataTo:(void*)buffer length:(size_t)length;
+-(int32_t) c2BufferFillDataTo:(void*)buffer length:(int32_t)length;
 
 @end
 
@@ -23,11 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) __nonnull id<C2BufferDelegate> delegate;
 
--(instancetype) initWithSize:(size_t)size delegate:(_Nonnull id<C2BufferDelegate>)delegate;
+-(instancetype) initWithSize:(int32_t)size delegate:(_Nonnull id<C2BufferDelegate>)delegate;
 
 //-(void) notifyConsumerWillDeactive:(int)consumerIndex;
 
--(size_t) readBytesForConsumer:(int)consumerIndex into:(void*)destBuffer length:(size_t)length isFinal:(BOOL)isFinal;
+-(int32_t) readBytesForConsumer:(int)consumerIndex into:(void*)destBuffer length:(int32_t)length isFinal:(BOOL)isFinal completion:(void(^)(int32_t))completion;
 
 -(void) finish;
 

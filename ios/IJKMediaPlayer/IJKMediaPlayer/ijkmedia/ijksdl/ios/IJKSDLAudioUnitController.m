@@ -176,6 +176,7 @@
         ioInputASBD.mBytesPerPacket = ioInputASBD.mBytesPerFrame * ioInputASBD.mFramesPerPacket;
         
         AudioStreamBasicDescription ioOutputASBD = mediaASBD;
+        ioOutputASBD.mSampleRate = preferredHardwareInputSampleRate;
 //        ioOutputASBD.mChannelsPerFrame = 2;
 //        ioOutputASBD.mBytesPerFrame = ioOutputASBD.mBitsPerChannel * ioOutputASBD.mChannelsPerFrame / 8;
 //        ioOutputASBD.mBytesPerPacket = ioOutputASBD.mBytesPerFrame * ioOutputASBD.mFramesPerPacket;

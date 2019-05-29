@@ -62,6 +62,8 @@
         }
         _spec = *aSpec;
 
+        _isPaused = YES;
+        
         if (aSpec->format != AUDIO_S16SYS) {
             NSLog(@"aout_open_audio: unsupported format %d\n", (int)aSpec->format);
             return nil;
@@ -273,6 +275,9 @@
     if (!_auGraph)
         return;
 
+    if (!_isPaused)
+        return;
+    
     _isPaused = NO;
     NSError *error = nil;
     if (NO == [[AVAudioSession sharedInstance] setActive:YES error:&error]) {
@@ -431,7 +436,7 @@ static OSStatus RenderCallback(void                        *inRefCon,
 
         for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
             AudioBuffer *ioBuffer = &ioData->mBuffers[i];
-//            [auController.c2Buffers[i] readBytesForConsumer:0 into:ioBuffer->mData length:ioBuffer->mDataByteSize isFinal:NO completion:nil];
+            [auController.c2Buffers[i] readBytesForConsumer:0 into:ioBuffer->mData length:ioBuffer->mDataByteSize isFinal:NO completion:nil];
         }
         //#AudioCallback#
         return noErr;

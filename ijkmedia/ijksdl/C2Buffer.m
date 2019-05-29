@@ -16,7 +16,7 @@
 @interface C2Buffer ()
 {
     uint8_t* _buffer;
-//    uint32_t _bytesFilledSubtrahends[2];
+    //    uint32_t _bytesFilledSubtrahends[2];
     bool _isConsumerLive[2];
     int32_t _bytesRead[2];
     int32_t _readLocations[2];
@@ -84,7 +84,7 @@
 
 -(int32_t) readBytesForConsumer:(int)consumerIndex into:(void*)destBuffer length:(int32_t)length isFinal:(BOOL)isFinal completion:(void(^)(int32_t))completion {
 #ifdef ENABLE_C2BUFFER_LOG_DEBUG
-    NSLog(@"#C2Buffer#Deadlock# readBytesForConsumer:%d length:%d isFinal:%d", consumerIndex, length, isFinal);
+    //    NSLog(@"#C2Buffer#Deadlock# readBytesForConsumer:%d length:%d isFinal:%d", consumerIndex, length, isFinal);
 #endif //#ifdef ENABLE_C2BUFFER_LOG_DEBUG
     _isConsumerLive[consumerIndex] = YES;
     int32_t lengthLeft = length;
@@ -95,7 +95,7 @@
         [_cond lock];
         {
             if (_bytesWritten <= _bytesRead[consumerIndex])
-            {
+            {// Clause A:
 #ifdef ENABLE_C2BUFFER_LOG_VERBOSE
                 NSLog(@"#C2Buffer#Deadlock# _bytesWritten=%d <= _bytesRead[%d]=%d, at %d in %s", _bytesWritten, consumerIndex, _bytesRead[consumerIndex], __LINE__, __PRETTY_FUNCTION__);
 #endif //#ifdef ENABLE_C2BUFFER_LOG_VERBOSE
@@ -149,6 +149,7 @@
 #ifdef ENABLE_C2BUFFER_LOG_VERBOSE
                     NSLog(@"#C2Buffer#Deadlock# emptyBytesCount = _size(=%d) - _bytesWritten(=%d) + min(_bytesRead[0]=%d, _bytesRead[1]=%d) = %d > 0, at %d in %s", _size, _bytesWritten, _bytesRead[0], _bytesRead[1], emptyBytesCount, __LINE__, __PRETTY_FUNCTION__);
 #endif //#ifdef ENABLE_C2BUFFER_LOG_VERBOSE
+                    // Clause A.1
                     _fetchingSize = emptyBytesCount < lengthLeft ? emptyBytesCount : lengthLeft;
 #ifdef ENABLE_C2BUFFER_LOG_VERBOSE
                     NSLog(@"#C2Buffer#Deadlock# _fetchingSize = min(lengthLeft=%d, emptyBytesCount=%d) = %d, at %d in %s", lengthLeft, emptyBytesCount, _fetchingSize, __LINE__, __PRETTY_FUNCTION__);
@@ -180,6 +181,8 @@
                 int32_t segmentLength = distanceToEnd > readyBytesLeft ? readyBytesLeft : distanceToEnd;
                 memcpy(pDst, _buffer + _readLocations[consumerIndex], segmentLength);
                 _readLocations[consumerIndex] += segmentLength;
+                if (_size < _readLocations[consumerIndex])
+                    printf("\n#C2Buffer#Deadlock# _readLocations[consumerIndex]=%d > _size=%d", _readLocations[consumerIndex], _size);
                 if (_size == _readLocations[consumerIndex])
                 {
                     _readLocations[consumerIndex] = 0;
@@ -213,11 +216,13 @@
         else if (_fetchingSize > 0)
         {
             while (_fetchingSize > 0)
-            {
+            {// When entering this clause, _fetchingSize > 0 and readyBytesLeft <= 0 must be true, so it must have enter Clause A.1;
                 int32_t actualFetchedCount = [_delegate c2BufferFillDataTo:(_buffer + _writeLocation) length:_fetchingSize];
                 [_cond lock];
                 {
                     _writeLocation += actualFetchedCount;
+                    if (_size < _writeLocation)
+                        printf("\n#C2Buffer#Deadlock# _writeLocation=%d > _size=%d, actualFetchedCount=%d, _fetchingSize=%d", _writeLocation, _size, actualFetchedCount, _fetchingSize);
                     if (_size == _writeLocation)
                     {
                         _writeLocation = 0;
@@ -277,29 +282,29 @@
     return length;
 }
 
-#define GIVEN_TESTCASE
+//#define GIVEN_TESTCASE
 const int32_t TestCaseBufferSize = 8;
 const int32_t TestCaseInvokeCount = 16;
 const int32_t TestCaseMaxFrameSize = 8;
 //int32_t TestCaseFrameSizes[2][32] = {{14, 14, 8, 8, 11, 3, 5, 13, 10, 3, 12, 10, 8, 3, 6, 15, 12, 6, 13, 2, 9, 6, 13, 14, 14, 5, 7, 4, 3, 6, 14, 3}, {6, 0, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 42, 0, 29, 2, 43, 0, 0, 0, 0, 0, 22, 50, 64, 52, 1, 47}};
 //int32_t TestCaseFrameSizes[2][32] = {{8, 9, 3, 11, 13, 2, 12, 7, 16, 8, 5, 13, 6, 4, 5, 13, 12, 9, 14, 2, 2, 15, 10, 8, 11, 7, 12, 8, 10, 9, 2, 3}, {3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10}};
-const int32_t TestCaseFrameSizes[2][TestCaseInvokeCount] = {{6, 8, 7, 0, 19, 7, 3, 3, 6, 5, 7, 8, 5, 5, 7, 2}, {4, 6, 2, 3, 5, 2, 8, 6, 4, 5, 3, 8, 7, 8, 7, 2}};
+const int32_t TestCaseFrameSizes[2][TestCaseInvokeCount] = {{6, 8, 7, 0, 6, 7, 3, 3, 6, 5, 7, 8, 5, 5, 7, 2}, {4, 6, 2, 3, 5, 2, 8, 6, 4, 5, 3, 8, 7, 8, 7, 2}};
 
 +(void) test {
     const int32_t MinBufferSize = 6;
-    const int32_t MaxBufferSize = 8;
+    const int32_t MaxBufferSize = 16;
     const NSArray<NSNumber* >* MinFrameSizes = @[@(2), @(2)];
 #ifdef GIVEN_TESTCASE
     const NSArray<NSNumber* >* MaxFrameSizes = @[@(TestCaseMaxFrameSize), @(TestCaseMaxFrameSize)];
 #else
-    const NSArray<NSNumber* >* MaxFrameSizes = @[@(8), @(8)];
+    const NSArray<NSNumber* >* MaxFrameSizes = @[@(32), @(32)];
 #endif
     
     const int32_t TestCount = 65536;
 #ifdef GIVEN_TESTCASE
     const int32_t InvokeCount = TestCaseInvokeCount;
 #else
-    const int32_t InvokeCount = 16;
+    const int32_t InvokeCount = 128;
 #endif
     
     long seed = [NSDate date].timeIntervalSince1970;
@@ -315,7 +320,8 @@ const int32_t TestCaseFrameSizes[2][TestCaseInvokeCount] = {{6, 8, 7, 0, 19, 7, 
         int32_t bufferSize = lrand48() % (MaxBufferSize - MinBufferSize + 1) + MinBufferSize;
 #endif
 #ifdef ENABLE_C2BUFFER_LOG_DEBUG
-        printf("#C2Buffer#Deadlock# Test#%d bufferSize=%d\n", iTest, bufferSize);
+        //        printf("#C2Buffer#Deadlock# Test#%d bufferSize=%d\n", iTest, bufferSize);
+        printf("T#%d ", iTest);
 #endif //#ifdef ENABLE_C2BUFFER_LOG_DEBUG
         tester.number = 0;
         C2Buffer* c2buffer = [[C2Buffer alloc] initWithSize:bufferSize delegate:tester];
@@ -340,14 +346,14 @@ const int32_t TestCaseFrameSizes[2][TestCaseInvokeCount] = {{6, 8, 7, 0, 19, 7, 
                     frameSizes[c][iCall] = frameSize;
 #endif
                     [c2buffer readBytesForConsumer:c into:&destBuffers[c][1] length:frameSize isFinal:(iCall == InvokeCount - 1) completion:^(int32_t bytesRead) {
-//                        NSLog(@"#C2Buffer# Test#%d Consumer#%d Block#%d, bytesRead = %d", iTest, c, iCall, bytesRead);
+                        //                        NSLog(@"#C2Buffer# Test#%d Consumer#%d Block#%d, bytesRead = %d", iTest, c, iCall, bytesRead);
                         BOOL passed = YES;
                         for (int32_t i=0; i<bytesRead-1; ++i)
                         {
                             if (destBuffers[c][i] + 1 != destBuffers[c][i+1] && (destBuffers[c][i] != 255 || destBuffers[c][i+1] != 0))
                             {
                                 passed = NO;
-                                printf("#C2Buffer# Test#%d Consumer#%d Block#%d Error at byte #%d(0x%x) and #%d(0x%x)\n", iTest, c, iCall, totalBytesRead + i, destBuffers[c][i], totalBytesRead + i + 1, destBuffers[c][i+1]);
+                                printf("\n#C2Buffer# Test#%d Consumer#%d Block#%d Error at byte #%d(0x%x) and #%d(0x%x)\n", iTest, c, iCall, totalBytesRead + i, destBuffers[c][i], totalBytesRead + i + 1, destBuffers[c][i+1]);
                                 printf("#C2Buffer#Error# bufferSize=%d\n", bufferSize);
                                 for (int j=0; j<2; ++j)
                                 {
@@ -362,9 +368,9 @@ const int32_t TestCaseFrameSizes[2][TestCaseInvokeCount] = {{6, 8, 7, 0, 19, 7, 
                             }
                         }
                         totalBytesRead += bytesRead;
-                        destBuffers[c][0] = destBuffers[c][frameSize];
-//                        if (passed)
-//                            NSLog(@"#C2Buffer# Passed : Test#%d Consumer#%d Block#%d", iTest, c, iCall);
+                        destBuffers[c][0] = destBuffers[c][bytesRead];
+                        //                        if (passed)
+                        //                            NSLog(@"#C2Buffer# Passed : Test#%d Consumer#%d Block#%d", iTest, c, iCall);
                     }];
                 }
             });

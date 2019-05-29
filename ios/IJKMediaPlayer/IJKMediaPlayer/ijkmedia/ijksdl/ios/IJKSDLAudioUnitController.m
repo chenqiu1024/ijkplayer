@@ -36,7 +36,7 @@
 @interface IJKSDLAudioUnitController () <C2BufferDelegate>
 
 @property (nonatomic, assign) AudioUnit ioUnit;
-//@property (nonatomic, assign) AudioUnit resampleUnit;
+@property (nonatomic, assign) AudioUnit resampler0Unit;
 @property (nonatomic, assign) AudioUnit mixerUnit;
 
 @property (nonatomic, assign) AudioBufferList* audioBufferList;
@@ -88,8 +88,8 @@
         
         NewAUGraph(&_auGraph);;
         
-        AUNode ioNode, mixerNode;//, resampleNode;
-        AudioComponentDescription ioACDesc, mixerACDesc;//, resampleACDesc, spliterACDesc;
+        AUNode ioNode, mixerNode, resampler0Node;
+        AudioComponentDescription ioACDesc, mixerACDesc, resampleACDesc;
         
 //        IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &mixerACDesc);
         mixerACDesc.componentType = kAudioUnitType_Mixer;
@@ -100,18 +100,18 @@
         
         IJKSDLGetAudioComponentDescriptionFromSpec(&_spec, &ioACDesc);
 
-//        resampleACDesc.componentType = kAudioUnitType_FormatConverter;
-//        resampleACDesc.componentSubType = kAudioUnitSubType_AUConverter;
-//        resampleACDesc.componentFlags = 0;
-//        resampleACDesc.componentFlagsMask = 0;
-//        resampleACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
+        resampleACDesc.componentType = kAudioUnitType_FormatConverter;
+        resampleACDesc.componentSubType = kAudioUnitSubType_AUConverter;
+        resampleACDesc.componentFlags = 0;
+        resampleACDesc.componentFlagsMask = 0;
+        resampleACDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
         
         AUGraphAddNode(_auGraph, &ioACDesc, &ioNode);
-//        AUGraphAddNode(_auGraph, &resampleACDesc, &resampleNode);
+        AUGraphAddNode(_auGraph, &resampleACDesc, &resampler0Node);
         AUGraphAddNode(_auGraph, &mixerACDesc, &mixerNode);
-        AUGraphConnectNodeInput(_auGraph, ioNode, 1, mixerNode, 1);
-        //AUGraphConnectNodeInput(_auGraph, resampleNode, 0, mixerNode, 0);
-        AUGraphConnectNodeInput(_auGraph, mixerNode, 0, ioNode, 0);
+        AUGraphConnectNodeInput(_auGraph, ioNode, 1, resampler0Node, 0);
+        AUGraphConnectNodeInput(_auGraph, resampler0Node, 0, mixerNode, 1);
+        status = AUGraphConnectNodeInput(_auGraph, mixerNode, 0, ioNode, 0);
         NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         status = AUGraphOpen(_auGraph);
@@ -119,7 +119,7 @@
         
         AUGraphNodeInfo(_auGraph, ioNode, NULL, &_ioUnit);
         status = AUGraphNodeInfo(_auGraph, mixerNode, NULL, &_mixerUnit);
-//        AUGraphNodeInfo(_auGraph, resampleNode, NULL, &_resampleUnit);
+        status = AUGraphNodeInfo(_auGraph, resampler0Node, NULL, &_resampler0Unit);
         NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         UInt32 flag = 1;
@@ -151,13 +151,6 @@
         AudioStreamBasicDescription mediaASBD;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &mediaASBD);
         
-//        status = AudioUnitSetProperty(_resampleUnit,
-//                                      kAudioUnitProperty_StreamFormat,
-//                                      kAudioUnitScope_Input,
-//                                      0,
-//                                      &mediaASBD,
-//                                      sizeOfASBD);
-        
         double preferredHardwareInputSampleRate = 16000.f;
         if ([[AVAudioSession sharedInstance] respondsToSelector:@selector(sampleRate)])
         {
@@ -183,38 +176,57 @@
         ioInputASBD.mBytesPerPacket = ioInputASBD.mBytesPerFrame * ioInputASBD.mFramesPerPacket;
         
         AudioStreamBasicDescription ioOutputASBD = mediaASBD;
-        ioOutputASBD.mChannelsPerFrame = 2;
-        ioOutputASBD.mBytesPerFrame = ioOutputASBD.mBitsPerChannel * ioOutputASBD.mChannelsPerFrame / 8;
-        ioOutputASBD.mBytesPerPacket = ioOutputASBD.mBytesPerFrame * ioOutputASBD.mFramesPerPacket;
+//        ioOutputASBD.mChannelsPerFrame = 2;
+//        ioOutputASBD.mBytesPerFrame = ioOutputASBD.mBitsPerChannel * ioOutputASBD.mChannelsPerFrame / 8;
+//        ioOutputASBD.mBytesPerPacket = ioOutputASBD.mBytesPerFrame * ioOutputASBD.mFramesPerPacket;
         
-//        status = AudioUnitSetProperty(_resampleUnit,
-//                                      kAudioUnitProperty_StreamFormat,
-//                                      kAudioUnitScope_Output,
-//                                      0,
-//                                      &ioOutASBD,
-//                                      sizeOfASBD);
-
         status = AudioUnitSetProperty(_ioUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
                                       1,
                                       &ioInputASBD,
                                       sizeOfASBD);
-        
+        NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        status = AudioUnitSetProperty(_resampler0Unit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Input,
+                                      0,
+                                      &ioInputASBD,
+                                      sizeOfASBD);
+        NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        status = AudioUnitSetProperty(_resampler0Unit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Output,
+                                      0,
+                                      &ioOutputASBD,
+                                      sizeOfASBD);
+        NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         status = AudioUnitSetProperty(_mixerUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
                                       1,
+                                      &ioOutputASBD,
+                                      sizeOfASBD);
+        NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        status = AudioUnitSetProperty(_mixerUnit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Input,
+                                      0,
                                       &mediaASBD,
                                       sizeOfASBD);
-
-        status = AudioUnitSetProperty(_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &ioOutputASBD, sizeOfASBD);
+        NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        status = AudioUnitSetProperty(_ioUnit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Input,
+                                      0,
+                                      &ioOutputASBD,
+                                      sizeOfASBD);
         NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         AURenderCallbackStruct renderAudioSourceCallback;
         renderAudioSourceCallback.inputProc = (AURenderCallback) RenderCallback;
         renderAudioSourceCallback.inputProcRefCon = (__bridge void*) self;
-        status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 1, &renderAudioSourceCallback, sizeof(renderAudioSourceCallback));
+        status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &renderAudioSourceCallback, sizeof(renderAudioSourceCallback));
         NSLog(@"#AUGraph#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
 //        AURenderCallbackStruct micInputCallback;

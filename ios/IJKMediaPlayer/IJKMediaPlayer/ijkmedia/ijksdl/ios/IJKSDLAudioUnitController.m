@@ -535,6 +535,11 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
             }
         }
         //#AudioCallback#
+        for (int i = 0; i < (int)ioData->mNumberBuffers; i++) {
+            AudioBuffer *ioBuffer = &ioData->mBuffers[i];
+            [auController.c2Buffers[i] readBytesForConsumer:1 into:ioBuffer->mData length:ioBuffer->mDataByteSize isFinal:NO completion:nil];
+        }
+        
         return noErr;
     }
 }

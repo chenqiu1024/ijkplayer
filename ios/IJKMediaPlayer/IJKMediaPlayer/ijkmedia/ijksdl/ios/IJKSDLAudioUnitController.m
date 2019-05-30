@@ -176,7 +176,7 @@
         ioInputASBD.mBytesPerPacket = ioInputASBD.mBytesPerFrame * ioInputASBD.mFramesPerPacket;
         
         AudioStreamBasicDescription ioOutputASBD = mediaASBD;
-        ioOutputASBD.mSampleRate = preferredHardwareInputSampleRate;
+//        ioOutputASBD.mSampleRate = preferredHardwareInputSampleRate;
 //        ioOutputASBD.mChannelsPerFrame = 2;
 //        ioOutputASBD.mBytesPerFrame = ioOutputASBD.mBitsPerChannel * ioOutputASBD.mChannelsPerFrame / 8;
 //        ioOutputASBD.mBytesPerPacket = ioOutputASBD.mBytesPerFrame * ioOutputASBD.mFramesPerPacket;
@@ -199,14 +199,14 @@
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
                                       0,
-                                      &ioOutputASBD,
+                                      &mediaASBD,
                                       sizeOfASBD);
         NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         status = AudioUnitSetProperty(_mixerUnit,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Input,
                                       1,
-                                      &ioOutputASBD,
+                                      &mediaASBD,
                                       sizeOfASBD);
         NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         status = AudioUnitSetProperty(_mixerUnit,
@@ -214,6 +214,13 @@
                                       kAudioUnitScope_Input,
                                       0,
                                       &mediaASBD,
+                                      sizeOfASBD);
+        NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+        status = AudioUnitSetProperty(_mixerUnit,
+                                      kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Output,
+                                      0,
+                                      &ioOutputASBD,
                                       sizeOfASBD);
         NSLog(@"#AUGraph# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         status = AudioUnitSetProperty(_ioUnit,

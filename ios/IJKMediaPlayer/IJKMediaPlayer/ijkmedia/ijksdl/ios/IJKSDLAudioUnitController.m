@@ -50,6 +50,7 @@
     AUGraph _auGraph;
     AUGraph _auGraph1;
     BOOL _isPaused;
+    int _headPhoneOn;
 }
 
 - (id)initWithAudioSpec:(const SDL_AudioSpec *)aSpec
@@ -74,6 +75,50 @@
             return nil;
         }
 
+        [[NSNotificationCenter defaultCenter] addObserverForName:AVAudioSessionInterruptionNotification
+                                                              object:self
+                                                               queue:[NSOperationQueue mainQueue]
+                                                          usingBlock:^(NSNotification *note) {
+                                                              BOOL ret = NO;
+                                                              NSError* error = nil;
+                                                              NSUInteger interruptionType = [[[note userInfo] objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+                                                              if (interruptionType == AVAudioSessionInterruptionTypeBegan) {
+                                                                  ret = [[AVAudioSession sharedInstance] setActive:NO error:&error];
+                                                              } else if (interruptionType == AVAudioSessionInterruptionTypeEnded) {
+                                                                  ret = [[AVAudioSession sharedInstance] setActive:YES error:&error];
+                                                              }
+                                                              if (!ret) {
+                                                                  NSLog(@"interuptType:%d setActive failed:%@", (int)interruptionType, error);
+                                                              }
+                                                          }];
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth error:nil];
+        ///!!![session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+//        [session setPreferredSampleRate:16000 error:nil];
+//        NSTimeInterval bufferDuration = 0.064;
+//        [session setPreferredIOBufferDuration:bufferDuration error:nil];
+//        [session setMode:AVAudioSessionModeVideoChat error:nil];
+//        [session setActive:YES error:nil];
+        NSArray *array = session.availableInputs;
+        for (int i=0; i<array.count; ++i)
+        {
+            AVAudioSessionPortDescription *desc = [array objectAtIndex:i];
+            NSLog(@"portType: %@, portName: %@", desc.portType, desc.portName);
+            if ([desc.portName containsString:@"耳机"] || [desc.portType isEqualToString:@"MicrophoneWired"] || [desc.portType containsString:@"Bluetooth"])
+            {
+                _headPhoneOn = 1;
+                break;
+            }
+        }
+        if (_headPhoneOn == 0)
+        {
+            ///!!![session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+        }
+        else
+        {
+            [session overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
+        }
+        
         _audioBufferList = (AudioBufferList*) malloc(sizeof(AudioBufferList));
         _audioBufferList->mNumberBuffers = 1;
         NSMutableArray* c2Buffers = [[NSMutableArray alloc] init];
@@ -270,6 +315,59 @@
     [self close];
 }
 
+-(void) routeChangeNotification: (NSNotification *)notification {
+    int reason = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
+    AVAudioSessionRouteDescription *desc = (AVAudioSessionRouteDescription *)[notification.userInfo valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
+    NSArray *array = desc.outputs;
+    
+    if (reason == AVAudioSessionRouteChangeReasonNewDeviceAvailable)
+    {
+        for (int i=0; i<array.count; ++i)
+        {
+            AVAudioSessionPortDescription *portDesc = [array objectAtIndex:i];
+            if ([portDesc.portType isEqualToString:@"Speaker"])
+            {
+                _headPhoneOn = 1;
+                AVAudioSession *session = [AVAudioSession sharedInstance];
+                AVAudioSessionPortDescription *currentRoute = [session.currentRoute.outputs objectAtIndex:0];
+                if ([currentRoute.portType isEqualToString:@"Headphones"])
+                {
+//                    if (audioDataBuffer && audioDataBuffer.count > 0) {
+//                        [audioDataBuffer removeObjectAtIndex:0];
+//                        playDataLength = 0;
+//                    }
+                    break;
+                }
+                else
+                {
+                    for (AVAudioSessionPortDescription *desc in session.availableInputs)
+                    {
+                        if ([desc.portType isEqualToString:@"MicrophoneWired"]||[desc.portType isEqualToString:AVAudioSessionPortHeadphones] || [desc.portType isEqualToString:AVAudioSessionPortHeadsetMic])
+                        {
+                            [session setPreferredInput:desc error:nil];
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    else if(reason == AVAudioSessionRouteChangeReasonOldDeviceUnavailable)
+    {
+        for (int i=0; i<array.count; ++i)
+        {
+            AVAudioSessionPortDescription *portDesc = [array objectAtIndex:i];
+            if ([portDesc.portType isEqualToString:@"Headphones"])
+            {
+                _headPhoneOn = 0; // 没有耳机
+                AVAudioSession *session = [AVAudioSession sharedInstance];
+                ///!!![session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+                break;
+            }
+        }
+    }
+}
+
 - (void)play
 {NSLog(@"#AudioDeadlock# play . at %d in %s", __LINE__, __PRETTY_FUNCTION__);
     if (!_auGraph)
@@ -280,6 +378,8 @@
     
     _isPaused = NO;
     NSError *error = nil;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(routeChangeNotification:)name:AVAudioSessionRouteChangeNotification object:[AVAudioSession sharedInstance]];
+    
     if (NO == [[AVAudioSession sharedInstance] setActive:YES error:&error]) {
         NSLog(@"AudioUnit: AVAudioSession.setActive(YES) failed: %@\n", error ? [error localizedDescription] : @"nil");
     }
@@ -324,6 +424,7 @@
 //    {
 //        [c2buffer finish];
 //    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     OSStatus status = AUGraphStop(_auGraph);
     if (status != noErr)

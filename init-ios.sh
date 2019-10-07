@@ -60,6 +60,7 @@ function pull_common() {
 
 function pull_fork() {
     echo "== pull ffmpeg fork $1 =="
+    echo "sh $TOOLS/pull-repo-ref.sh $IJK_FFMPEG_FORK ios/ffmpeg-$1 ${IJK_FFMPEG_LOCAL_REPO}"
     sh $TOOLS/pull-repo-ref.sh $IJK_FFMPEG_FORK ios/ffmpeg-$1 ${IJK_FFMPEG_LOCAL_REPO}
     echo "cd ios/ffmpeg-$1"
     cd ios/ffmpeg-$1

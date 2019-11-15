@@ -644,6 +644,7 @@ static OSStatus MixerRenderNotifyCallback(void                        *inRefCon,
             {
                 totalDataSize += ioBuffer->mDataByteSize;
 //                NSLog(@"#AudioUnitCallback# MixerRenderNotifyCallback TimeStamp = %f", (float)totalDataSize / ioData->mBuffers[0].mNumberChannels / 2 / auController.spec.freq);
+                NSLog(@"#AUMGR# byteSize=%ld.  at %d in %s", (long)ioData->mBuffers[i].mDataByteSize, __LINE__, __PRETTY_FUNCTION__);
                 (*auController.spec.audioMixedCallback)(auController.spec.userdata, ioBuffer->mData, ioBuffer->mDataByteSize, auController.spec.audioParams);
             }
         }

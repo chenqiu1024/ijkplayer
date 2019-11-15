@@ -28,8 +28,15 @@
 #include "ijksdl/ijksdl_inc_internal.h"
 #include "ijksdl/ijksdl_thread.h"
 #include "ijksdl/ijksdl_aout_internal.h"
-#import "IJKSDLAudioUnitController.h"
 #import "IJKSDLAudioQueueController.h"
+
+#define USE_AUDIOUNITMANAGER
+
+#ifdef USE_AUDIOUNITMANAGER
+#import "AudioUnitManager.h"
+#else
+#import "IJKSDLAudioUnitController.h"
+#endif
 
 #define SDL_IOS_AUDIO_MAX_CALLBACKS_PER_SEC 15
 
@@ -38,6 +45,8 @@
 struct SDL_Aout_Opaque {
 #ifndef USE_AUDIOUNIT_PLAYBACK
     IJKSDLAudioQueueController *aoutController;
+#elif defined(USE_AUDIOUNITMANAGER)
+    AudioUnitManager* aoutController;
 #else
     IJKSDLAudioUnitController* aoutController;
 #endif
@@ -50,6 +59,8 @@ static int aout_open_audio(SDL_Aout *aout, const SDL_AudioSpec *desired, SDL_Aud
     SDL_Aout_Opaque *opaque = aout->opaque;
 #ifndef USE_AUDIOUNIT_PLAYBACK
     opaque->aoutController = [[IJKSDLAudioQueueController alloc] initWithAudioSpec:desired];
+#elif defined(USE_AUDIOUNITMANAGER)
+    opaque->aoutController = [[AudioUnitManager alloc] initWithAudioSpec:desired];
 #else
     opaque->aoutController = [[IJKSDLAudioUnitController alloc] initWithAudioSpec:desired];
 #endif

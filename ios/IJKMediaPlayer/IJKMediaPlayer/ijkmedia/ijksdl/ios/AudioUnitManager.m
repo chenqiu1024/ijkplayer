@@ -206,19 +206,18 @@ static OSStatus RecordAndPlayCallbackProc(void* inRefCon
 //    if (!(*ioActionFlags & kAudioUnitRenderAction_PostRender))
 //        return noErr;
     
-    if (auMgr.isRecording && auMgr.delegate && [auMgr.delegate respondsToSelector:@selector(audioUnitManager:didReceiveAudioData:length:channel:)])
-    {
+    if (auMgr.isRecording)
+    {NSLog(@"#AUMGR# isRecording.  at %d in %s", __LINE__, __PRETTY_FUNCTION__);
         for (int i=0; i<ioData->mNumberBuffers; ++i)
         {
             if (!ioData->mBuffers[i].mData) continue;
-            [auMgr.delegate audioUnitManager:auMgr didReceiveAudioData:ioData->mBuffers[i].mData length:ioData->mBuffers[i].mDataByteSize channel:i];
             
-            //static NSUInteger totalBytesLength = 0;
-            //if (i == 0)
-            //{
-            //    LOG_V(@"#AudioUnit# ReSampler: totalBytesLength=%ld, inNumberFrames=%d", totalBytesLength, inNumberFrames);
-            //    totalBytesLength += ioData->mBuffers[i].mDataByteSize;
-            //}
+            if (auMgr.delegate && [auMgr.delegate respondsToSelector:@selector(audioUnitManager:didReceiveAudioData:length:channel:)])
+            {
+                [auMgr.delegate audioUnitManager:auMgr didReceiveAudioData:ioData->mBuffers[i].mData length:ioData->mBuffers[i].mDataByteSize channel:i];
+            }
+            NSLog(@"#AUMGR# byteSize=%ld.  at %d in %s", (long)ioData->mBuffers[i].mDataByteSize, __LINE__, __PRETTY_FUNCTION__);
+            (*auMgr.spec.audioMixedCallback)(auMgr.spec.userdata, ioData->mBuffers[i].mData, ioData->mBuffers[i].mDataByteSize, auMgr.spec.audioParams);
         }
     }
     
@@ -703,6 +702,7 @@ static OSStatus RecordAndPlayCallbackProc(void* inRefCon
         _spec.channels = 2;
         AudioStreamBasicDescription mediaASBD;
         IJKSDLGetAudioStreamBasicDescriptionFromSpec(&_spec, &mediaASBD);
+        _audioSourceSampleRate = mediaASBD.mSampleRate;
         [self open:mediaASBD];
     }
     return self;
@@ -717,15 +717,17 @@ static OSStatus RecordAndPlayCallbackProc(void* inRefCon
 }
 
 - (double)get_latency_seconds {
-    return 0.0;
+    return ((double)(3)) * _spec.samples / _spec.freq;
 }
 
 - (void)play {
-    
+    [self startPlaying];
+    [self startRecording];
 }
 
 - (void)pause {
-    
+    [self stopRecording];
+    [self stopPlaying];
 }
 
 - (void)flush {
@@ -733,7 +735,8 @@ static OSStatus RecordAndPlayCallbackProc(void* inRefCon
 }
 
 - (void)stop {
-    
+    [self stopRecording];
+    [self stopPlaying];
 }
 
 @end

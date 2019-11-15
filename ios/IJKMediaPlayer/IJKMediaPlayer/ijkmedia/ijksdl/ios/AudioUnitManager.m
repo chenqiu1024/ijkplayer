@@ -152,6 +152,12 @@ static OSStatus MediaSourceCallbackProc(void* inRefCon
         }
     }
     
+    for (int iBuffer=0; iBuffer<ioData->mNumberBuffers; ++iBuffer)
+    {
+        AudioBuffer audioBuffer = ioData->mBuffers[iBuffer];
+        auMgr.spec.callback(auMgr.spec.userdata, audioBuffer.mData, (int)audioBuffer.mDataByteSize, auMgr.spec.audioParams);
+    }///!!!
+    
     if (playOver && auMgr.completionHandler)
     {
         auMgr.completionHandler();

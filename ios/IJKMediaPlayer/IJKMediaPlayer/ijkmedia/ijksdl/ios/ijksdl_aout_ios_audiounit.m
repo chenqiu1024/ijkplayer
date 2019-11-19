@@ -30,7 +30,7 @@
 #include "ijksdl/ijksdl_aout_internal.h"
 #import "IJKSDLAudioQueueController.h"
 
-#define USE_AUDIOUNITMANAGER
+//#define USE_AUDIOUNITMANAGER
 
 #ifdef USE_AUDIOUNITMANAGER
 #import "AudioUnitManager.h"

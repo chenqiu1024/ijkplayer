@@ -5,8 +5,9 @@
 //  Created by DOM QIU on 2019/5/27.
 //  Copyright © 2019 Cyllenge. All rights reserved.
 //
-#include "ijksdl/ijksdl_aout.h"
+
 #import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,8 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, readonly) float ioSampleRate;
 @property (nonatomic, assign, readonly) float audioSourceSampleRate;
+@property (nonatomic, assign, readonly) float recordingSampleRate;
 
 +(instancetype) sharedInstance;
+
+-(instancetype) initWithMediaSourceSpec:(AudioStreamBasicDescription)mediaSourceSpec recordingOutputSpec:(AudioStreamBasicDescription)recordingOutputSpec;
 
 -(void) startPlaying;
 -(void) startPlayingFromAudioSource:(float)audioSourceSampleRate;
@@ -39,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(void) startRecording:(id<AudioUnitManagerDelegate>)delegate;
 -(void) stopRecording;
 
+-(void) finish;
+
 -(void) addAudioData:(NSData*)monoData;
 
 -(void) addAudioData:(const void*)data length:(NSUInteger)length channel:(int)channel;
@@ -48,23 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
 -(void) startAUGraphIfNecessary;
 -(void) startAUGraphIfNecessary:(float)audioSourceSampleRate;
 -(void) stopAUGraphIfNecessary;
-
-////////////////////////////////////
-
-- (id)initWithAudioSpec:(const SDL_AudioSpec *)aSpec;
-
-- (void)setPlaybackRate:(float)playbackRate;
-- (void)setPlaybackVolume:(float)playbackVolume;
-- (double)get_latency_seconds;
-
-- (void)play;
-- (void)pause;
-- (void)flush;
-- (void)stop;
-
-@property (nonatomic, readonly) SDL_AudioSpec spec;
-
-/////////////////////////////////
 
 @end
 

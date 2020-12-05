@@ -77,6 +77,12 @@ typedef struct IJK_GLES2_Renderer
     int     frame_sar_den;
 
     GLsizei last_buffer_width;
+    
+    GLuint depth_program;
+    GLuint depth_fragment_shader;
+    GLuint depth_texture;
+    GLboolean (*func_use_depth)(IJK_GLES2_Renderer *renderer);
+    
 } IJK_GLES2_Renderer;
 
 typedef struct IJK_GLES_Matrix

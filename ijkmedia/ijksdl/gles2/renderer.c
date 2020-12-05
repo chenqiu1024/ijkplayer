@@ -58,21 +58,46 @@ void IJK_GLES2_Renderer_reset(IJK_GLES2_Renderer *renderer)
         return;
 
     if (renderer->vertex_shader)
+    {
+        glDetachShader(renderer->program, renderer->vertex_shader);
         glDeleteShader(renderer->vertex_shader);
+        renderer->vertex_shader = 0;
+    }
     if (renderer->fragment_shader)
+    {
+        glDetachShader(renderer->program, renderer->fragment_shader);
         glDeleteShader(renderer->fragment_shader);
+        renderer->fragment_shader = 0;
+    }
     if (renderer->program)
+    {
         glDeleteProgram(renderer->program);
-
-    renderer->vertex_shader   = 0;
-    renderer->fragment_shader = 0;
-    renderer->program         = 0;
+        renderer->program = 0;
+    }
 
     for (int i = 0; i < IJK_GLES2_MAX_PLANE; ++i) {
         if (renderer->plane_textures[i]) {
             glDeleteTextures(1, &renderer->plane_textures[i]);
             renderer->plane_textures[i] = 0;
         }
+    }
+
+    if (renderer->depth_fragment_shader)
+    {
+        glDetachShader(renderer->depth_program, renderer->depth_fragment_shader);
+        glDeleteShader(renderer->depth_fragment_shader);
+        renderer->depth_fragment_shader = 0;
+    }
+    if (renderer->depth_program)
+    {
+        glDeleteProgram(renderer->depth_program);
+        renderer->depth_program = 0;
+    }
+    
+    if (renderer->depth_texture)
+    {
+        glDeleteTextures(1, &renderer->depth_texture);
+        renderer->depth_texture = 0;
     }
 }
 
@@ -135,18 +160,38 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_base(const char *fragment_shader_s
     if (!link_status)
         goto fail;
 
-
     renderer->av4_position = glGetAttribLocation(renderer->program, "av4_Position");                IJK_GLES2_checkError_TRACE("glGetAttribLocation(av4_Position)");
     renderer->av2_texcoord = glGetAttribLocation(renderer->program, "av2_Texcoord");                IJK_GLES2_checkError_TRACE("glGetAttribLocation(av2_Texcoord)");
     renderer->um4_mvp      = glGetUniformLocation(renderer->program, "um4_ModelViewProjection");    IJK_GLES2_checkError_TRACE("glGetUniformLocation(um4_ModelViewProjection)");
 
+    renderer->depth_fragment_shader = IJK_GLES2_loadShader(GL_FRAGMENT_SHADER, fragment_shader_source);///!!!TODO:
+    if (!renderer->depth_fragment_shader)
+        goto fail;
+    renderer->depth_program = glCreateProgram();
+    if (!renderer->depth_program)
+        goto fail;
+    glAttachShader(renderer->depth_program, renderer->vertex_shader);
+    glAttachShader(renderer->depth_program, renderer->depth_fragment_shader);
+    glLinkProgram(renderer->depth_program);
+    link_status = GL_FALSE;
+    glGetProgramiv(renderer->depth_program, GL_LINK_STATUS, &link_status);
+    if (!link_status)
+        goto fail;
+    
     return renderer;
 
 fail:
-
-    if (renderer && renderer->program)
-        IJK_GLES2_printProgramInfo(renderer->program);
-
+    if (renderer)
+    {
+        if (renderer->program)
+        {
+            IJK_GLES2_printProgramInfo(renderer->program);
+        }
+        if (renderer->depth_program)
+        {
+            IJK_GLES2_printProgramInfo(renderer->depth_program);
+        }
+    }
     IJK_GLES2_Renderer_free(renderer);
     return NULL;
 }

@@ -49,6 +49,17 @@ static GLboolean yuv420sp_use(IJK_GLES2_Renderer *renderer)
 
     glUniformMatrix3fv(renderer->um3_color_conversion, 1, GL_FALSE, IJK_GLES2_getColorMatrix_bt709());
 
+    if (0 == renderer->depth_texture)
+    {
+        glGenTextures(1, &renderer->depth_texture);
+    }
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, renderer->depth_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    
     return GL_TRUE;
 }
 
@@ -110,6 +121,9 @@ static GLboolean yuv420sp_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOv
                  GL_RG_EXT,
                  GL_UNSIGNED_BYTE,
                  pixels[1]);
+
+    glBindTexture(GL_TEXTURE_2D, renderer->depth_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widths[0], heights[0], 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, pixels[0]);
 
     return GL_TRUE;
 }

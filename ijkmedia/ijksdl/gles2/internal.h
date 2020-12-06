@@ -100,6 +100,8 @@ const char *IJK_GLES2_getFragmentShader_rgb();
 
 const char *IJK_GLES2_getFragmentShader_yuv420p_depth();
 const char *IJK_GLES2_getFragmentShader_yuv420sp_depth();
+const char *IJK_GLES2_getFragmentShader_yuv444p10le_depth();
+const char *IJK_GLES2_getFragmentShader_rgb_depth();
 
 const GLfloat *IJK_GLES2_getColorMatrix_bt709();
 const GLfloat *IJK_GLES2_getColorMatrix_bt601();
@@ -115,5 +117,10 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgbx8888();
 
 IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420p_depth();
 IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420sp_depth();
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv444p10le_depth();
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420sp_vtb_depth(SDL_VoutOverlay *overlay);
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgb565_depth();
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgb888_depth();
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgbx8888_depth();
 
 #endif

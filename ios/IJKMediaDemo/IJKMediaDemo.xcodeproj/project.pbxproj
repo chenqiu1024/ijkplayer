@@ -343,7 +343,7 @@
 				ORGANIZATIONNAME = bilibili;
 				TargetAttributes = {
 					E6903EFB17EAF70200CFD954 = {
-						DevelopmentTeam = QBAB3CS86A;
+						DevelopmentTeam = XNCE899229;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -353,6 +353,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = E6903EF317EAF70200CFD954;
@@ -532,7 +533,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = QBAB3CS86A;
+				DEVELOPMENT_TEAM = XNCE899229;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IJKMediaDemo/IJKMediaDemo-Prefix.pch";
@@ -543,7 +544,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "tv.danmaku.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "c5d7b50e-fa29-4346-a295-7456013b071b";
-				PROVISIONING_PROFILE_SPECIFIER = "Madv360 Wildcard Development";
+				PROVISIONING_PROFILE_SPECIFIER = "Domqiu Wildcard iOS Development ProvisioninProfile";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -557,7 +558,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = QBAB3CS86A;
+				DEVELOPMENT_TEAM = XNCE899229;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IJKMediaDemo/IJKMediaDemo-Prefix.pch";
@@ -568,7 +569,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "tv.danmaku.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "c5d7b50e-fa29-4346-a295-7456013b071b";
-				PROVISIONING_PROFILE_SPECIFIER = "Madv360 Wildcard Development";
+				PROVISIONING_PROFILE_SPECIFIER = "Domqiu Wildcard iOS Development ProvisioninProfile";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

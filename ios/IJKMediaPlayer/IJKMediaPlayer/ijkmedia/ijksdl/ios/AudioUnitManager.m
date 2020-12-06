@@ -20,7 +20,7 @@
 #define LOG_V(...)
 #endif
 
-NSString* AudioUnitRenderActionFlagsString(AudioUnitRenderActionFlags flags) {
+static NSString* AudioUnitRenderActionFlagsString(AudioUnitRenderActionFlags flags) {
     NSDictionary* dict = @{@(kAudioUnitRenderAction_PostRender):@"PostRender"
                            ,@(kAudioUnitRenderAction_PreRender):@"PreRender"
                            ,@(kAudioUnitRenderAction_OutputIsSilence):@"Silence"

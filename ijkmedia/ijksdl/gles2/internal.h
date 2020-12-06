@@ -81,6 +81,7 @@ typedef struct IJK_GLES2_Renderer
     GLuint depth_program;
     GLuint depth_fragment_shader;
     GLuint depth_texture;
+    GLuint us2_depth;
     GLboolean (*func_use_depth)(IJK_GLES2_Renderer *renderer);
     
 } IJK_GLES2_Renderer;
@@ -97,6 +98,9 @@ const char *IJK_GLES2_getFragmentShader_yuv444p10le();
 const char *IJK_GLES2_getFragmentShader_yuv420sp();
 const char *IJK_GLES2_getFragmentShader_rgb();
 
+const char *IJK_GLES2_getFragmentShader_yuv420p_depth();
+const char *IJK_GLES2_getFragmentShader_yuv420sp_depth();
+
 const GLfloat *IJK_GLES2_getColorMatrix_bt709();
 const GLfloat *IJK_GLES2_getColorMatrix_bt601();
 
@@ -108,5 +112,8 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420sp_vtb(SDL_VoutOverlay *over
 IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgb565();
 IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgb888();
 IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_rgbx8888();
+
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420p_depth();
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420sp_depth();
 
 #endif

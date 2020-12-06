@@ -21,9 +21,9 @@
 
 #include "internal.h"
 
-static GLboolean yuv420p_use(IJK_GLES2_Renderer *renderer)
+static GLboolean yuv420p_depth_use(IJK_GLES2_Renderer *renderer)
 {
-//    ALOGI("use render yuv420p\n");
+//    ALOGI("use render yuv420p_depth\n");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glUseProgram(renderer->program);            IJK_GLES2_checkError_TRACE("glUseProgram");
@@ -45,10 +45,22 @@ static GLboolean yuv420p_use(IJK_GLES2_Renderer *renderer)
 
     glUniformMatrix3fv(renderer->um3_color_conversion, 1, GL_FALSE, IJK_GLES2_getColorMatrix_bt709());
 
+    if (0 == renderer->depth_texture)
+    {
+        glGenTextures(1, &renderer->depth_texture);
+    }
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, renderer->depth_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glUniform1i(renderer->us2_depth, 3);
+
     return GL_TRUE;
 }
 
-static GLsizei yuv420p_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
+static GLsizei yuv420p_depth_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
 {
     if (!overlay)
         return 0;
@@ -56,7 +68,7 @@ static GLsizei yuv420p_getBufferWidth(IJK_GLES2_Renderer *renderer, SDL_VoutOver
     return overlay->pitches[0] / 1;
 }
 
-static GLubyte* yuv420p_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
+static GLubyte* yuv420p_depth_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outHeight, GLsizei* outLength, bool* outIsCopied, SDL_VoutOverlay* overlay) {
     if (!overlay)
         return NULL;
     
@@ -68,7 +80,7 @@ static GLubyte* yuv420p_getLuminanceDataPointer(GLsizei* outWidth, GLsizei* outH
     return overlay->pixels[0];
 }
 
-static GLboolean yuv420p_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
+static GLboolean yuv420p_depth_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOverlay *overlay)
 {
     if (!renderer || !overlay)
         return GL_FALSE;
@@ -86,7 +98,7 @@ static GLboolean yuv420p_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOve
             planes[2] = 1;
             break;
         default:
-            ALOGE("[yuv420p] unexpected format %x\n", overlay->format);
+            ALOGE("[yuv420p_depth] unexpected format %x\n", overlay->format);
             return GL_FALSE;
     }
 
@@ -106,13 +118,16 @@ static GLboolean yuv420p_uploadTexture(IJK_GLES2_Renderer *renderer, SDL_VoutOve
                      pixels[plane]);
     }
 
+    glBindTexture(GL_TEXTURE_2D, renderer->depth_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widths[0], heights[0], 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, pixels[0]);
+
     return GL_TRUE;
 }
 
-IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420p()
+IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420p_depth()
 {
-    ALOGI("create render yuv420p\n");
-    IJK_GLES2_Renderer *renderer = IJK_GLES2_Renderer_create_base(IJK_GLES2_getFragmentShader_yuv420p());
+    ALOGI("create render yuv420p_depth\n");
+    IJK_GLES2_Renderer *renderer = IJK_GLES2_Renderer_create_base(IJK_GLES2_getFragmentShader_yuv420p_depth());
     if (!renderer)
         goto fail;
 
@@ -122,10 +137,12 @@ IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420p()
 
     renderer->um3_color_conversion = glGetUniformLocation(renderer->program, "um3_ColorConversion"); IJK_GLES2_checkError_TRACE("glGetUniformLocation(um3_ColorConversionMatrix)");
 
-    renderer->func_use            = yuv420p_use;
-    renderer->func_getBufferWidth = yuv420p_getBufferWidth;
-    renderer->func_uploadTexture  = yuv420p_uploadTexture;
-    renderer->func_getLuminanceDataPointer = yuv420p_getLuminanceDataPointer;
+    renderer->us2_depth = glGetUniformLocation(renderer->program, "us2_Depth"); IJK_GLES2_checkError_TRACE("glGetUniformLocation(us2_Depth)");
+    
+    renderer->func_use            = yuv420p_depth_use;
+    renderer->func_getBufferWidth = yuv420p_depth_getBufferWidth;
+    renderer->func_uploadTexture  = yuv420p_depth_uploadTexture;
+    renderer->func_getLuminanceDataPointer = yuv420p_depth_getLuminanceDataPointer;
 
     return renderer;
 fail:

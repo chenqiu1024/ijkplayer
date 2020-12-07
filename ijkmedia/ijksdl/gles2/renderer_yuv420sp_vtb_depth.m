@@ -212,7 +212,28 @@ static GLboolean yuv420sp_vtb_depth_uploadTexture(IJK_GLES2_Renderer *renderer, 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, renderer->depth_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    CVPixelBufferLockBaseAddress(pixel_buffer, 0);
+    const GLubyte* pSrc = (const GLubyte*)CVPixelBufferGetBaseAddressOfPlane(pixel_buffer, 0);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixel_buffer, 0);
+    GLubyte* dstBuffer = (GLubyte*)malloc(frame_width * frame_height);
+    GLubyte* pDst = dstBuffer;
+    for (int row = 0; row < frame_height; ++row)
+    {
+        memcpy(pDst, pSrc, frame_width);
+        pDst += frame_width;
+        pSrc += bytesPerRow;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame_width, frame_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, dstBuffer);
+    free(dstBuffer);
+    CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
+    
+    
     return GL_TRUE;
 }
 
@@ -235,6 +256,12 @@ static GLvoid yuv420sp_vtb_depth_destroy(IJK_GLES2_Renderer *renderer)
     }
     free(renderer->opaque);
     renderer->opaque = nil;
+    
+    if (renderer->depth_texture)
+    {
+        glDeleteTextures(1, &renderer->depth_texture);
+        renderer->depth_texture = 0;
+    }
 }
 
 IJK_GLES2_Renderer *IJK_GLES2_Renderer_create_yuv420sp_vtb_depth(SDL_VoutOverlay *overlay)

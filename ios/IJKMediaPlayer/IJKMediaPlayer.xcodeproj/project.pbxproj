@@ -172,24 +172,6 @@
 		54CF8A521E15287D00309DD5 /* ijktree.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CF8A461E15287D00309DD5 /* ijktree.h */; };
 		54CF8A531E15287D00309DD5 /* ijkutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 54CF8A471E15287D00309DD5 /* ijkutils.c */; };
 		54CF8A541E15287D00309DD5 /* ijkutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CF8A481E15287D00309DD5 /* ijkutils.h */; };
-		BB8682C4257CCF30009F7200 /* yuv420sp_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682C2257CCF30009F7200 /* yuv420sp_depth.fsh.c */; };
-		BB8682C5257CCF30009F7200 /* yuv420sp_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682C2257CCF30009F7200 /* yuv420sp_depth.fsh.c */; };
-		BB8682C6257CCF30009F7200 /* yuv420p_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682C3257CCF30009F7200 /* yuv420p_depth.fsh.c */; };
-		BB8682C7257CCF30009F7200 /* yuv420p_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682C3257CCF30009F7200 /* yuv420p_depth.fsh.c */; };
-		BB8682E1257CDAB7009F7200 /* renderer_yuv420p_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682DF257CDAB7009F7200 /* renderer_yuv420p_depth.c */; };
-		BB8682E2257CDAB7009F7200 /* renderer_yuv420p_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682DF257CDAB7009F7200 /* renderer_yuv420p_depth.c */; };
-		BB8682E3257CDAB7009F7200 /* renderer_yuv420sp_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682E0257CDAB7009F7200 /* renderer_yuv420sp_depth.c */; };
-		BB8682E4257CDAB7009F7200 /* renderer_yuv420sp_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682E0257CDAB7009F7200 /* renderer_yuv420sp_depth.c */; };
-		BB8682EB257CE3F6009F7200 /* renderer_rgb_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682E8257CE3F6009F7200 /* renderer_rgb_depth.c */; };
-		BB8682EC257CE3F6009F7200 /* renderer_rgb_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682E8257CE3F6009F7200 /* renderer_rgb_depth.c */; };
-		BB8682ED257CE3F6009F7200 /* renderer_yuv444p10le_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682E9257CE3F6009F7200 /* renderer_yuv444p10le_depth.c */; };
-		BB8682EE257CE3F7009F7200 /* renderer_yuv444p10le_depth.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682E9257CE3F6009F7200 /* renderer_yuv444p10le_depth.c */; };
-		BB8682EF257CE3F7009F7200 /* renderer_yuv420sp_vtb_depth.m in Sources */ = {isa = PBXBuildFile; fileRef = BB8682EA257CE3F6009F7200 /* renderer_yuv420sp_vtb_depth.m */; };
-		BB8682F0257CE3F7009F7200 /* renderer_yuv420sp_vtb_depth.m in Sources */ = {isa = PBXBuildFile; fileRef = BB8682EA257CE3F6009F7200 /* renderer_yuv420sp_vtb_depth.m */; };
-		BB8682F6257CE587009F7200 /* rgb_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682F4257CE587009F7200 /* rgb_depth.fsh.c */; };
-		BB8682F7257CE587009F7200 /* rgb_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682F4257CE587009F7200 /* rgb_depth.fsh.c */; };
-		BB8682F8257CE587009F7200 /* yuv444p10le_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682F5257CE587009F7200 /* yuv444p10le_depth.fsh.c */; };
-		BB8682F9257CE587009F7200 /* yuv444p10le_depth.fsh.c in Sources */ = {isa = PBXBuildFile; fileRef = BB8682F5257CE587009F7200 /* yuv444p10le_depth.fsh.c */; };
 		BBB7962420B2F56E0059C1DA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB7962320B2F56E0059C1DA /* libbz2.tbd */; };
 		BBB7962620B2F5730059C1DA /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB7962520B2F5730059C1DA /* libiconv.tbd */; };
 		BBB7962720B2F5780059C1DA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB7962320B2F56E0059C1DA /* libbz2.tbd */; };
@@ -347,15 +329,6 @@
 		54CF8A461E15287D00309DD5 /* ijktree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijktree.h; sourceTree = "<group>"; };
 		54CF8A471E15287D00309DD5 /* ijkutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ijkutils.c; sourceTree = "<group>"; };
 		54CF8A481E15287D00309DD5 /* ijkutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijkutils.h; sourceTree = "<group>"; };
-		BB8682C2257CCF30009F7200 /* yuv420sp_depth.fsh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yuv420sp_depth.fsh.c; sourceTree = "<group>"; };
-		BB8682C3257CCF30009F7200 /* yuv420p_depth.fsh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yuv420p_depth.fsh.c; sourceTree = "<group>"; };
-		BB8682DF257CDAB7009F7200 /* renderer_yuv420p_depth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = renderer_yuv420p_depth.c; sourceTree = "<group>"; };
-		BB8682E0257CDAB7009F7200 /* renderer_yuv420sp_depth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = renderer_yuv420sp_depth.c; sourceTree = "<group>"; };
-		BB8682E8257CE3F6009F7200 /* renderer_rgb_depth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = renderer_rgb_depth.c; sourceTree = "<group>"; };
-		BB8682E9257CE3F6009F7200 /* renderer_yuv444p10le_depth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = renderer_yuv444p10le_depth.c; sourceTree = "<group>"; };
-		BB8682EA257CE3F6009F7200 /* renderer_yuv420sp_vtb_depth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = renderer_yuv420sp_vtb_depth.m; sourceTree = "<group>"; };
-		BB8682F4257CE587009F7200 /* rgb_depth.fsh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rgb_depth.fsh.c; sourceTree = "<group>"; };
-		BB8682F5257CE587009F7200 /* yuv444p10le_depth.fsh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yuv444p10le_depth.fsh.c; sourceTree = "<group>"; };
 		BBB7962320B2F56E0059C1DA /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		BBB7962520B2F5730059C1DA /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		E607FFDE1B7B60F9005F11A6 /* IJKDeviceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IJKDeviceModel.h; path = IJKMediaPlayer/IJKDeviceModel.h; sourceTree = "<group>"; };
@@ -910,11 +883,6 @@
 		E6C459851C7030B6004831EC /* gles2 */ = {
 			isa = PBXGroup;
 			children = (
-				BB8682E8257CE3F6009F7200 /* renderer_rgb_depth.c */,
-				BB8682EA257CE3F6009F7200 /* renderer_yuv420sp_vtb_depth.m */,
-				BB8682E9257CE3F6009F7200 /* renderer_yuv444p10le_depth.c */,
-				BB8682DF257CDAB7009F7200 /* renderer_yuv420p_depth.c */,
-				BB8682E0257CDAB7009F7200 /* renderer_yuv420sp_depth.c */,
 				E6C459861C7030B6004831EC /* color.c */,
 				E6C459871C7030B6004831EC /* common.c */,
 				E6C459881C7030B6004831EC /* fsh */,
@@ -934,10 +902,6 @@
 		E6C459881C7030B6004831EC /* fsh */ = {
 			isa = PBXGroup;
 			children = (
-				BB8682F4257CE587009F7200 /* rgb_depth.fsh.c */,
-				BB8682F5257CE587009F7200 /* yuv444p10le_depth.fsh.c */,
-				BB8682C3257CCF30009F7200 /* yuv420p_depth.fsh.c */,
-				BB8682C2257CCF30009F7200 /* yuv420sp_depth.fsh.c */,
 				E6C459C21C708E60004831EC /* rgb.fsh.c */,
 				E6C459891C7030B6004831EC /* yuv420p.fsh.c */,
 				E6C459C61C7095E5004831EC /* yuv420sp.fsh.c */,
@@ -1267,20 +1231,16 @@
 				5450AFD21E63EA4300568494 /* yuv420p.fsh.c in Sources */,
 				5450AFD31E63EA4300568494 /* ijksdl_error.c in Sources */,
 				5450AFD41E63EA4300568494 /* IJKDeviceModel.m in Sources */,
-				BB8682F7257CE587009F7200 /* rgb_depth.fsh.c in Sources */,
 				5450AFD51E63EA4300568494 /* ijkiocache.c in Sources */,
 				5450AFD61E63EA4300568494 /* ijksdl_egl.c in Sources */,
 				527E316922895CCC00106DE4 /* C2Buffer.m in Sources */,
 				5450AFD71E63EA4300568494 /* ijkio.c in Sources */,
 				5450AFD81E63EA4300568494 /* IJKAudioKit.m in Sources */,
-				BB8682F0257CE3F7009F7200 /* renderer_yuv420sp_vtb_depth.m in Sources */,
 				5450AFD91E63EA4300568494 /* IJKMPMoviePlayerController.m in Sources */,
 				5450AFDA1E63EA4300568494 /* IJKSDLHudViewCell.m in Sources */,
 				5450AFDB1E63EA4300568494 /* ijksdl_vout_overlay_videotoolbox.m in Sources */,
 				5450AFDC1E63EA4300568494 /* ff_ffpipenode.c in Sources */,
-				BB8682E4257CDAB7009F7200 /* renderer_yuv420sp_depth.c in Sources */,
 				5450AFDD1E63EA4300568494 /* ijksdl_stdinc.c in Sources */,
-				BB8682C7257CCF30009F7200 /* yuv420p_depth.fsh.c in Sources */,
 				5450AFDE1E63EA4300568494 /* IJKVideoToolBox.m in Sources */,
 				5450AFDF1E63EA4300568494 /* ijksegment.c in Sources */,
 				5450AFE01E63EA4300568494 /* IJKMediaUtils.m in Sources */,
@@ -1298,10 +1258,8 @@
 				5450AFEB1E63EA4300568494 /* NSString+IJKMedia.m in Sources */,
 				5450AFEC1E63EA4300568494 /* ijksdl_vout_overlay_ffmpeg.c in Sources */,
 				5450AFED1E63EA4300568494 /* ijksdl_mutex.c in Sources */,
-				BB8682EE257CE3F7009F7200 /* renderer_yuv444p10le_depth.c in Sources */,
 				5450AFEE1E63EA4300568494 /* ijktree.c in Sources */,
 				5450AFEF1E63EA4300568494 /* IJKSDLAudioQueueController.m in Sources */,
-				BB8682F9257CE587009F7200 /* yuv444p10le_depth.fsh.c in Sources */,
 				5450AFF01E63EA4300568494 /* ijksdl_thread.c in Sources */,
 				5450AFF11E63EA4300568494 /* yuv420sp.fsh.c in Sources */,
 				5450AFF21E63EA4300568494 /* ff_ffplay.c in Sources */,
@@ -1313,7 +1271,6 @@
 				5450AFF81E63EA4300568494 /* ijkasync.c in Sources */,
 				5450AFF91E63EA4300568494 /* renderer_yuv420sp_vtb.m in Sources */,
 				5450AFFA1E63EA4300568494 /* ijkutils.c in Sources */,
-				BB8682C5257CCF30009F7200 /* yuv420sp_depth.fsh.c in Sources */,
 				5450AFFB1E63EA4300568494 /* IJKSDLGLView.m in Sources */,
 				5450AFFC1E63EA4300568494 /* ijksdl_timer.c in Sources */,
 				5450AFFD1E63EA4300568494 /* ijkfifo.c in Sources */,
@@ -1338,10 +1295,8 @@
 				5450B0101E63EA4300568494 /* ffpipenode_ios_videotoolbox_vdec.m in Sources */,
 				5450B0111E63EA4300568494 /* IJKAVPlayerLayerView.m in Sources */,
 				5450B0121E63EA4300568494 /* IJKSDLHudViewController.m in Sources */,
-				BB8682EC257CE3F6009F7200 /* renderer_rgb_depth.c in Sources */,
 				5450B0131E63EA4300568494 /* ijksdl_vout_ios_gles2.m in Sources */,
 				5450B0141E63EA4300568494 /* ijklongurl.c in Sources */,
-				BB8682E2257CDAB7009F7200 /* renderer_yuv420p_depth.c in Sources */,
 				5450B0151E63EA4300568494 /* renderer_rgb.c in Sources */,
 				5450B0161E63EA4300568494 /* ffpipeline_ffplay.c in Sources */,
 			);
@@ -1368,20 +1323,16 @@
 				E6C459941C7030B6004831EC /* yuv420p.fsh.c in Sources */,
 				E654EAC21B6B287E00B0F2D0 /* ijksdl_error.c in Sources */,
 				E607FFE11B7B62E3005F11A6 /* IJKDeviceModel.m in Sources */,
-				BB8682F6257CE587009F7200 /* rgb_depth.fsh.c in Sources */,
 				54CF8A361E1526F800309DD5 /* ijkiocache.c in Sources */,
 				E6C459BA1C706A13004831EC /* ijksdl_egl.c in Sources */,
 				527E316822895CCC00106DE4 /* C2Buffer.m in Sources */,
 				54CF8A331E1526F800309DD5 /* ijkio.c in Sources */,
 				E654EAA31B6B283700B0F2D0 /* IJKAudioKit.m in Sources */,
-				BB8682EF257CE3F7009F7200 /* renderer_yuv420sp_vtb_depth.m in Sources */,
 				E654EAAA1B6B284300B0F2D0 /* IJKMPMoviePlayerController.m in Sources */,
 				E68B7AD01C1E97B0001DE241 /* IJKSDLHudViewCell.m in Sources */,
 				E654EACB1B6B288A00B0F2D0 /* ijksdl_vout_overlay_videotoolbox.m in Sources */,
 				E654EAB11B6B285900B0F2D0 /* ff_ffpipenode.c in Sources */,
-				BB8682E3257CDAB7009F7200 /* renderer_yuv420sp_depth.c in Sources */,
 				E654EAC41B6B287E00B0F2D0 /* ijksdl_stdinc.c in Sources */,
-				BB8682C6257CCF30009F7200 /* yuv420p_depth.fsh.c in Sources */,
 				5407EC2A1DF7F93B00457BFE /* IJKVideoToolBox.m in Sources */,
 				54A029B91D4700E6001C61C1 /* ijksegment.c in Sources */,
 				E654EAA61B6B283700B0F2D0 /* IJKMediaUtils.m in Sources */,
@@ -1399,10 +1350,8 @@
 				E698089C1C7EB13A0048A46C /* NSString+IJKMedia.m in Sources */,
 				E654EABF1B6B287600B0F2D0 /* ijksdl_vout_overlay_ffmpeg.c in Sources */,
 				E654EAC31B6B287E00B0F2D0 /* ijksdl_mutex.c in Sources */,
-				BB8682ED257CE3F6009F7200 /* renderer_yuv444p10le_depth.c in Sources */,
 				54CF8A511E15287D00309DD5 /* ijktree.c in Sources */,
 				E654EACD1B6B288A00B0F2D0 /* IJKSDLAudioQueueController.m in Sources */,
-				BB8682F8257CE587009F7200 /* yuv444p10le_depth.fsh.c in Sources */,
 				E654EAC51B6B287E00B0F2D0 /* ijksdl_thread.c in Sources */,
 				E6C459C81C7095E5004831EC /* yuv420sp.fsh.c in Sources */,
 				E654EAB21B6B285900B0F2D0 /* ff_ffplay.c in Sources */,
@@ -1414,7 +1363,6 @@
 				54A029B61D4700E6001C61C1 /* ijkasync.c in Sources */,
 				E6E1B9A81C741F72000C6C72 /* renderer_yuv420sp_vtb.m in Sources */,
 				54CF8A531E15287D00309DD5 /* ijkutils.c in Sources */,
-				BB8682C4257CCF30009F7200 /* yuv420sp_depth.fsh.c in Sources */,
 				E654EAD31B6B288A00B0F2D0 /* IJKSDLGLView.m in Sources */,
 				E654EAC61B6B287E00B0F2D0 /* ijksdl_timer.c in Sources */,
 				54CF8A4B1E15287D00309DD5 /* ijkfifo.c in Sources */,
@@ -1439,10 +1387,8 @@
 				E654EAB61B6B286400B0F2D0 /* ffpipenode_ios_videotoolbox_vdec.m in Sources */,
 				E654EAA81B6B283D00B0F2D0 /* IJKAVPlayerLayerView.m in Sources */,
 				E68B7AC61C1E7F20001DE241 /* IJKSDLHudViewController.m in Sources */,
-				BB8682EB257CE3F6009F7200 /* renderer_rgb_depth.c in Sources */,
 				E654EACA1B6B288A00B0F2D0 /* ijksdl_vout_ios_gles2.m in Sources */,
 				54A029B81D4700E6001C61C1 /* ijklongurl.c in Sources */,
-				BB8682E1257CDAB7009F7200 /* renderer_yuv420p_depth.c in Sources */,
 				E6C459C01C708CAF004831EC /* renderer_rgb.c in Sources */,
 				E654EABA1B6B286B00B0F2D0 /* ffpipeline_ffplay.c in Sources */,
 			);

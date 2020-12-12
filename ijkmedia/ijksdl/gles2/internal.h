@@ -82,8 +82,9 @@ typedef struct IJK_GLES2_Renderer
     GLuint depth_fragment_shader;
     GLuint depth_texture;
     GLuint us2_depth;
-    GLboolean (*func_use_depth)(IJK_GLES2_Renderer *renderer);
-    
+    void* depthHandle;
+    void* depthData;
+
 } IJK_GLES2_Renderer;
 
 typedef struct IJK_GLES_Matrix

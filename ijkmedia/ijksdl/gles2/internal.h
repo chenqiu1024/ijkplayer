@@ -83,7 +83,7 @@ typedef struct IJK_GLES2_Renderer
     GLuint depth_texture;
     GLuint us2_depth;
     void* depthHandle;
-    void* depthData;
+    void* depthInBuffer;
 
 } IJK_GLES2_Renderer;
 

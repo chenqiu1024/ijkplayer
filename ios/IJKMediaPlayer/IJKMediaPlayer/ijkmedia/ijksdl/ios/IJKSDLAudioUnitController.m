@@ -127,18 +127,18 @@
         AUGraphConnectNodeInput(_auGraph, resampleNode, 0, mixerNode, 0);
 //        AUGraphConnectNodeInput(_auGraph, mixerNode, 0, ioNode, 0);
         status = AUGraphAddNode(_auGraph1, &ioACDesc, &outputIONode);
-        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         AUGraphOpen(_auGraph);
         status = AUGraphOpen(_auGraph1);
-        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         AUGraphNodeInfo(_auGraph, inputIONode, NULL, &_inputIOUnit);
         AUGraphNodeInfo(_auGraph, mixerNode, NULL, &_mixerUnit);
         AUGraphNodeInfo(_auGraph, resampleNode, NULL, &_resampleUnit);
         
         status = AUGraphNodeInfo(_auGraph1, outputIONode, NULL, &_outputIOUnit);
-        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         UInt32 flag = 1;
         status = AudioUnitSetProperty(_inputIOUnit,
@@ -153,7 +153,7 @@
                                       0,
                                       &flag,
                                       sizeof(flag));
-        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         UInt32 busCount = 2;
         status = AudioUnitSetProperty(_mixerUnit, kAudioUnitProperty_ElementCount, kAudioUnitScope_Input, 0, &busCount, sizeof(busCount));
@@ -227,32 +227,32 @@
                                       sizeOfASBD);
 
         status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mediaASBD, sizeOfASBD);
-        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         AURenderCallbackStruct renderAudioSourceCallback;
         renderAudioSourceCallback.inputProc = (AURenderCallback) RenderCallback;
         renderAudioSourceCallback.inputProcRefCon = (__bridge void*) self;
         status = AudioUnitSetProperty(_resampleUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &renderAudioSourceCallback, sizeof(renderAudioSourceCallback));
-        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
 //        AURenderCallbackStruct micInputCallback;
 //        micInputCallback.inputProc = (AURenderCallback) MicInputCallback;
 //        micInputCallback.inputProcRefCon = (__bridge void*) self;
 //        status = AudioUnitSetProperty(_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 0, &micInputCallback, sizeof(micInputCallback));
         status = AudioUnitAddRenderNotify(_inputIOUnit, (AURenderCallback)MicInputCallback, (__bridge void*)self);
-        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
 //        AURenderCallbackStruct mixerRenderNotifyCallback;
 //        mixerRenderNotifyCallback.inputProc = (AURenderCallback) MixerRenderNotifyCallback;
 //        mixerRenderNotifyCallback.inputProcRefCon = (__bridge void*) self;
         status = AudioUnitAddRenderNotify(_mixerUnit, (AURenderCallback)MixerRenderNotifyCallback, (__bridge void*)self);
-        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         AURenderCallbackStruct outputRenderCallback;
         outputRenderCallback.inputProc = (AURenderCallback) OutputRenderCallback;
         outputRenderCallback.inputProcRefCon = (__bridge void*) self;
         status = AudioUnitSetProperty(_outputIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &outputRenderCallback, sizeof(outputRenderCallback));
-        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
+//        NSLog(@"#RecordCallback#AudioUnitCallback# status=%d, at %d in %s", status, __LINE__, __PRETTY_FUNCTION__);
         
         SDL_CalculateAudioSpec(&_spec);
         
@@ -412,7 +412,7 @@ static OSStatus RenderCallback(void                        *inRefCon,
                                AudioBufferList             *ioData)
 {
     @autoreleasepool {
-        NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
+//        NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
         if (ioData)
         {
 //            NSLog(@"#RecordCallback#AudioUnitCallback# RenderCallback : numBuffers=%d", ioData->mNumberBuffers);
@@ -451,7 +451,7 @@ static OSStatus OutputRenderCallback(void                        *inRefCon,
                                AudioBufferList             *ioData)
 {
     @autoreleasepool {
-        NSLog(@"#AudioUnitCallback# OutputRenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
+//        NSLog(@"#AudioUnitCallback# OutputRenderCallback : flag=0x%x, inBusNumber=%d, inNumberFrames=%d, ioData=0x%lx", *ioActionFlags, inBusNumber, inNumberFrames, (long)ioData);
         if (ioData)
         {
 //            NSLog(@"#AudioUnitCallback# OutputRenderCallback : numBuffers=%d", ioData->mNumberBuffers);

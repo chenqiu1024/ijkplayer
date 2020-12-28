@@ -69,9 +69,9 @@ typedef struct IJK_GLES2_Renderer
     int     format;
     int     gravity;
     int orientation;
-    GLsizei layer_width;
+    GLsizei layer_width; // View size
     GLsizei layer_height;
-    int     frame_width;
+    int     frame_width;// Video size
     int     frame_height;
     int     frame_sar_num;
     int     frame_sar_den;
